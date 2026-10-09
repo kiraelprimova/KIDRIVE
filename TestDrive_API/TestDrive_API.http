@@ -1,0 +1,6 @@
+@TestDrive_API_HostAddress = http://localhost:5128
+
+GET {{TestDrive_API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
