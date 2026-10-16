@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TestDrive_API.Models;
-using TestDrive_API.Classes;
 
 namespace TestDrive_API.Controllers
 {
@@ -16,9 +15,8 @@ namespace TestDrive_API.Controllers
             _context = context;
         }
 
-        // Получить список избранных автомобилей пользователя (К7)
         [HttpGet("GetFavorites")]
-        public async Task<IActionResult> GetFavorites([FromQuery] int userId)
+        public async Task<ActionResult> GetFavorites(int userId)
         {
             var favorites = await _context.Favorites
                 .Where(f => f.IdUser == userId && f.IdCarNavigation.IsDeleted == 0)
@@ -52,29 +50,25 @@ namespace TestDrive_API.Controllers
             return Ok(favorites);
         }
 
-        // Добавить автомобиль в избранное (К7)
         [HttpPost("AddFavorite")]
-        public async Task<IActionResult> AddFavorite([FromBody] FavoriteDTO dto)
+        public async Task<ActionResult> AddFavorite(int idUser, int idCar)
         {
-            if (dto == null)
-                return BadRequest("Неверные данные");
-
-            var userExists = await _context.Users.AnyAsync(u => u.IdUser == dto.IdUser && u.IsDelete == 0);
+            var userExists = await _context.Users.AnyAsync(u => u.IdUser == idUser && u.IsDelete == 0);
             if (!userExists)
                 return NotFound("Пользователь не найден");
 
-            var car = await _context.Cars.FirstOrDefaultAsync(c => c.IdCar == dto.IdCar && c.IsDeleted == 0);
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.IdCar == idCar && c.IsDeleted == 0);
             if (car == null)
                 return NotFound("Автомобиль не найден");
 
-            var alreadyExists = await _context.Favorites.AnyAsync(f => f.IdUser == dto.IdUser && f.IdCar == dto.IdCar);
+            var alreadyExists = await _context.Favorites.AnyAsync(f => f.IdUser == idUser && f.IdCar == idCar);
             if (alreadyExists)
                 return BadRequest("Автомобиль уже добавлен в избранное");
 
             var favorite = new Favorite
             {
-                IdUser = dto.IdUser,
-                IdCar = dto.IdCar,
+                IdUser = idUser,
+                IdCar = idCar,
                 CreatedAt = DateTime.Now
             };
 
@@ -84,9 +78,8 @@ namespace TestDrive_API.Controllers
             return Ok("Автомобиль добавлен в избранное");
         }
 
-        // Удалить автомобиль из избранного
         [HttpDelete("RemoveFavorite")]
-        public async Task<IActionResult> RemoveFavorite([FromQuery] int userId, [FromQuery] int carId)
+        public async Task<ActionResult> RemoveFavorite(int userId, int carId)
         {
             var favorite = await _context.Favorites
                 .FirstOrDefaultAsync(f => f.IdUser == userId && f.IdCar == carId);
@@ -100,10 +93,8 @@ namespace TestDrive_API.Controllers
             return Ok("Автомобиль удален из избранного");
         }
 
-        // Проверить, находится ли автомобиль в избранном
         [HttpGet("CheckFavorite")]
-        [HttpGet("Check")]
-        public async Task<IActionResult> IsFavorite([FromQuery] int userId, [FromQuery] int carId)
+        public async Task<ActionResult> IsFavorite(int userId, int carId)
         {
             bool exists = await _context.Favorites.AnyAsync(f => f.IdUser == userId && f.IdCar == carId);
             return Ok(exists);

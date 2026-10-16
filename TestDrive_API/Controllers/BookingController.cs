@@ -19,38 +19,29 @@ namespace TestDrive_API.Controllers
             _validation = validation;
         }
 
-        // Создание бронирования клиентом
         [HttpPost("CreateBooking")]
-        public async Task<IActionResult> CreateBooking([FromBody] BookingDTO dto)
+        [HttpPost]
+        public async Task<ActionResult> CreateBooking([FromBody] Booking booking)
         {
-            if (dto == null)
+            if (booking == null)
                 return BadRequest("Неверные данные");
 
-            var booking = new Booking
-            {
-                IdCar = dto.IdCar,
-                IdUser = dto.IdUser,
-                BookingDate = dto.BookingDate,
-                BookingTime = dto.BookingTime,
-                IdPayment = dto.IdPayment == 0 ? 1 : dto.IdPayment,
-                IdStatus = 1
-            };
+            if (booking.IdPayment == 0)
+                booking.IdPayment = 1;
 
-            // Проверка базовой валидации (дата, существование сущностей)
+            booking.IdStatus = 1;
+
             var validationError = _validation.ValidateBooking(booking);
             if (validationError != null)
                 return BadRequest(validationError);
 
-            // Переводим время бронирования в минуты для проверки интервала (4 часа = 240 мин)
             int newBookingMinutes = booking.BookingTime.Hour * 60 + booking.BookingTime.Minute;
 
-            // Бронирования на ту же дату (исключая отменённые со статусом 3)
             var sameDateBookings = await _context.Bookings
                 .Where(b => b.BookingDate == booking.BookingDate && b.IdStatus != 3)
                 .Select(b => new { b.IdCar, b.IdUser, b.BookingTime })
                 .ToListAsync();
 
-            // Проверка: свободен ли автомобиль в этом 4-часовом окне
             bool carBusy = sameDateBookings.Any(b =>
                 b.IdCar == booking.IdCar &&
                 Math.Abs((b.BookingTime.Hour * 60 + b.BookingTime.Minute) - newBookingMinutes) < 240
@@ -59,7 +50,6 @@ namespace TestDrive_API.Controllers
             if (carBusy)
                 return BadRequest("Автомобиль уже забронирован на это время");
 
-            // Проверка: свободен ли пользователь
             bool userBusy = sameDateBookings.Any(b =>
                 b.IdUser == booking.IdUser &&
                 Math.Abs((b.BookingTime.Hour * 60 + b.BookingTime.Minute) - newBookingMinutes) < 240
@@ -71,16 +61,12 @@ namespace TestDrive_API.Controllers
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
-            return Ok("Заявка на бронирование создана и передана на рассмотрение менеджеру.");
+            return Ok("Заявка на бронирование создана");
         }
 
-        [HttpPost]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> CreateBookingLegacy([FromBody] BookingDTO dto) => CreateBooking(dto);
-
-        // Получение полного списка бронирований
         [HttpGet("GetAllBookings")]
-        public async Task<IActionResult> GetAllBookings()
+        [HttpGet]
+        public async Task<ActionResult> GetAllBookings()
         {
             var bookings = await _context.Bookings
                 .Include(b => b.IdUserNavigation)
@@ -95,7 +81,6 @@ namespace TestDrive_API.Controllers
                     bookingDate = b.BookingDate,
                     bookingTime = b.BookingTime,
                     idStatus = b.IdStatus,
-
                     idUserNavigation = new
                     {
                         idUser = b.IdUserNavigation.IdUser,
@@ -105,7 +90,6 @@ namespace TestDrive_API.Controllers
                         phone = b.IdUserNavigation.Phone,
                         email = b.IdUserNavigation.Email
                     },
-
                     idCarNavigation = new
                     {
                         idCar = b.IdCarNavigation.IdCar,
@@ -114,7 +98,6 @@ namespace TestDrive_API.Controllers
                         price = b.IdCarNavigation.Price,
                         yearCar = b.IdCarNavigation.YearCar
                     },
-
                     idStatusNavigation = new
                     {
                         statusName = b.IdStatusNavigation.StatusName
@@ -125,13 +108,8 @@ namespace TestDrive_API.Controllers
             return Ok(bookings);
         }
 
-        [HttpGet]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetAllBookingsLegacy() => GetAllBookings();
-
-        // Изменение статуса бронирования менеджером или клиентом (отмена/подтверждение/завершение)
-        [HttpPut("UpdateStatus/{id}")]
-        public async Task<IActionResult> UpdateBookingStatus(int id, int statusId)
+        [HttpPut("UpdateStatus")]
+        public async Task<ActionResult> UpdateBookingStatus(int id, int statusId)
         {
             var booking = await _context.Bookings.FindAsync(id);
 
@@ -141,7 +119,6 @@ namespace TestDrive_API.Controllers
             booking.IdStatus = statusId;
             await _context.SaveChangesAsync();
 
-            // Если менеджер подтвердил бронирование (статус 2) — по ТЗ генерируем PDF и отправляем на email
             if (statusId == 2)
             {
                 var fullBooking = await _context.Bookings
@@ -181,11 +158,10 @@ namespace TestDrive_API.Controllers
                     }
                     catch (Exception)
                     {
-                        // Даже если почта временно недоступна, статус уже обновлен
                     }
                 }
 
-                return Ok("Бронирование подтверждено. Договор сформирован и отправлен на email клиента.");
+                return Ok("Бронирование подтверждено.");
             }
 
             if (statusId == 3)
@@ -200,9 +176,5 @@ namespace TestDrive_API.Controllers
 
             return Ok("Статус бронирования обновлён.");
         }
-
-        [HttpPut("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> UpdateBookingStatusLegacy(int id, int statusId) => UpdateBookingStatus(id, statusId);
     }
 }

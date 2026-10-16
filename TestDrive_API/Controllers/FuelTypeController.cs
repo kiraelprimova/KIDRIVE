@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TestDrive_API.Models;
 
 namespace TestDrive_API.Controllers
@@ -14,16 +15,17 @@ namespace TestDrive_API.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public IActionResult GetAllFuelTypes()
+        [HttpGet("GetAllFuelTypes")]
+        public async Task<ActionResult> GetAllFuelTypes()
         {
-            return Ok(_context.FuelsTypes.ToList());
+            var fuelTypes = await _context.FuelsTypes.ToListAsync();
+            return Ok(fuelTypes);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetFuelType(int id)
+        [HttpGet("GetFuelType")]
+        public async Task<ActionResult> GetFuelType(int id)
         {
-            var fuelType = _context.FuelsTypes.Find(id);
+            var fuelType = await _context.FuelsTypes.FindAsync(id);
             if (fuelType == null)
                 return NotFound();
 

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TestDrive_API.Models;
-using TestDrive_API.Classes;
 
 namespace TestDrive_API.Controllers
 {
@@ -14,17 +14,18 @@ namespace TestDrive_API.Controllers
         {
             _context = context;
         }
-        // Получение полного списка ролей
-        [HttpGet]
-        public IActionResult GetAllRoles()
+
+        [HttpGet("GetAllRoles")]
+        public async Task<ActionResult> GetAllRoles()
         {
-            return Ok(_context.Roles.ToList());
+            var roles = await _context.Roles.ToListAsync();
+            return Ok(roles);
         }
-        // Получение конкретной роли
-        [HttpGet("{id}")]
-        public IActionResult GetRole(int id)
+
+        [HttpGet("GetRole")]
+        public async Task<ActionResult> GetRole(int id)
         {
-            var role = _context.Roles.Find(id);
+            var role = await _context.Roles.FindAsync(id);
 
             if (role == null)
                 return NotFound();

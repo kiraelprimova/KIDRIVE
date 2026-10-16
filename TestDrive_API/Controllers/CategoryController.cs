@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TestDrive_API.Models;
-using TestDrive_API.Classes;
 
 namespace TestDrive_API.Controllers
 {
@@ -14,50 +14,23 @@ namespace TestDrive_API.Controllers
         {
             _context = context;
         }
-        // Получение полного списка категорий
+
         [HttpGet("GetAllCategories")]
-        public IActionResult GetAllCategories()
+        public async Task<ActionResult> GetAllCategories()
         {
-            return Ok(_context.Categories.ToList());
+            var categories = await _context.Categories.ToListAsync();
+            return Ok(categories);
         }
 
-        [HttpGet]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public IActionResult GetAllCategoriesLegacy() => GetAllCategories();
-
-        // Получение конкретной категории
-        [HttpGet("GetCategory/{id}")]
-        public IActionResult GetCategory(int id)
+        [HttpGet("GetCategory")]
+        public async Task<ActionResult> GetCategory(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = await _context.Categories.FindAsync(id);
 
             if (category == null)
                 return NotFound();
 
             return Ok(category);
         }
-
-        [HttpGet("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public IActionResult GetCategoryLegacy(int id) => GetCategory(id);
-
-        //[HttpPost("AddCategory")]
-        //public async Task<IActionResult> AddCategory(Category category)
-        //{
-        //    if (_context.Categories.Any(c =>
-        //        c.NameCategory.ToLower() ==
-        //        category.NameCategory.ToLower()))
-        //    {
-        //        return Ok(_context.Categories.First(c =>
-        //            c.NameCategory.ToLower() ==
-        //            category.NameCategory.ToLower()));
-        //    }
-
-        //    _context.Categories.Add(category);
-
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok(category);
-        //}
     }
 }

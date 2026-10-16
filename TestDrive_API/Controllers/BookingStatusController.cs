@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TestDrive_API.Models;
-using TestDrive_API.Classes;
 
 namespace TestDrive_API.Controllers
 {
@@ -14,17 +14,18 @@ namespace TestDrive_API.Controllers
         {
             _context = context;
         }
-        // Получение полного списка статусов
-        [HttpGet]
-        public IActionResult GetAllStatuses()
+
+        [HttpGet("GetAllStatuses")]
+        public async Task<ActionResult> GetAllStatuses()
         {
-            return Ok(_context.BookingStatuses.ToList());
+            var statuses = await _context.BookingStatuses.ToListAsync();
+            return Ok(statuses);
         }
-        // Получение конкретного статуса
-        [HttpGet("{id}")]
-        public IActionResult GetStatus(int id)
+
+        [HttpGet("GetStatus")]
+        public async Task<ActionResult> GetStatus(int id)
         {
-            var status = _context.BookingStatuses.Find(id);
+            var status = await _context.BookingStatuses.FindAsync(id);
 
             if (status == null)
                 return NotFound();

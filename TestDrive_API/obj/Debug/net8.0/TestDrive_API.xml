@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TestDrive_API</name>
+    </assembly>
+    <members>
+        <member name="P:TestDrive_API.Models.Car.PowerHp">
+            <summary>
+            Мощность в л.с.
+            </summary>
+        </member>
+    </members>
+</doc>

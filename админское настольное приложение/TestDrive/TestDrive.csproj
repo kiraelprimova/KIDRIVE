@@ -1,0 +1,82 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\audiQ3.jpg" />
+    <None Remove="Resources\audiRS7.jpg" />
+    <None Remove="Resources\bmwE34.jpg" />
+    <None Remove="Resources\bmwM3.jpg" />
+    <None Remove="Resources\bmwM5.jpg" />
+    <None Remove="Resources\chery5.jpg" />
+    <None Remove="Resources\chery6.jpg" />
+    <None Remove="Resources\hondaCivic.jpg" />
+    <None Remove="Resources\hondaS2000.jpg" />
+    <None Remove="Resources\kiaK5.jpg" />
+    <None Remove="Resources\kiaSeitos.jpg" />
+    <None Remove="Resources\ladaPriora.jpg" />
+    <None Remove="Resources\lexus500.jpg" />
+    <None Remove="Resources\lexus570.jpg" />
+    <None Remove="Resources\lexusIfa.jpg" />
+    <None Remove="Resources\logo.ico" />
+    <None Remove="Resources\mercedes212.jpg" />
+    <None Remove="Resources\mercedes53.jpg" />
+    <None Remove="Resources\teslaModel.jpg" />
+    <None Remove="Resources\teslaModelY.jpg" />
+    <None Remove="Resources\teslaRoadster.jpg" />
+    <None Remove="Resources\toyotaCamry.jpg" />
+    <None Remove="Resources\toyotaSupra.jpg" />
+    <None Remove="Resources\volkswagenPassat.jpg" />
+    <None Remove="Resources\volkswagenPolo.jpg" />
+    <None Remove="Resources\заглушка.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0" />
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="3.119.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\audiQ3.jpg" />
+    <Resource Include="Resources\audiRS7.jpg" />
+    <Resource Include="Resources\bmwE34.jpg" />
+    <Resource Include="Resources\bmwM3.jpg" />
+    <Resource Include="Resources\bmwM5.jpg" />
+    <Resource Include="Resources\kiaSeitos.jpg" />
+    <Resource Include="Resources\lexusIfa.jpg" />
+    <Resource Include="Resources\teslaModelY.jpg" />
+    <Resource Include="Resources\welcome.png" />
+    <Resource Include="Resources\chery5.jpg" />
+    <Resource Include="Resources\chery6.jpg" />
+    <Resource Include="Resources\hondaCivic.jpg" />
+    <Resource Include="Resources\hondaS2000.jpg" />
+    <Resource Include="Resources\kiaK5.jpg" />
+    <Resource Include="Resources\ladaPriora.jpg" />
+    <Resource Include="Resources\lexus500.jpg" />
+    <Resource Include="Resources\lexus570.jpg" />
+    <Resource Include="Resources\logo.ico" />
+    <Resource Include="Resources\mercedes212.jpg" />
+    <Resource Include="Resources\mercedes53.jpg" />
+    <Resource Include="Resources\teslaModel.jpg" />
+    <Resource Include="Resources\teslaRoadster.jpg" />
+    <Resource Include="Resources\toyotaCamry.jpg" />
+    <Resource Include="Resources\toyotaSupra.jpg" />
+    <Resource Include="Resources\volkswagenPassat.jpg" />
+    <Resource Include="Resources\volkswagenPolo.jpg" />
+    <Resource Include="Resources\заглушка.png" />
+  </ItemGroup>
+
+</Project>

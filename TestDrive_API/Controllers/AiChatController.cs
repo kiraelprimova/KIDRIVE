@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TestDrive_API.Classes;
 using TestDrive_API.Models;
 
 namespace TestDrive_API.Controllers
@@ -17,32 +16,28 @@ namespace TestDrive_API.Controllers
             _context = context;
         }
 
-        // Отправить сообщение в ИИ-чат для подбора автомобиля (К8)
-        [HttpPost("Message")]
-        public async Task<IActionResult> SendMessage([FromBody] AiChatMessageDTO dto)
+        [HttpPost("SendMessage")]
+        public async Task<ActionResult> SendMessage(int idUser, string message)
         {
-            if (dto == null || string.IsNullOrWhiteSpace(dto.Message))
+            if (string.IsNullOrWhiteSpace(message))
                 return BadRequest("Сообщение не может быть пустым");
 
-            var userExists = await _context.Users.AnyAsync(u => u.IdUser == dto.IdUser && u.IsDelete == 0);
+            var userExists = await _context.Users.AnyAsync(u => u.IdUser == idUser && u.IsDelete == 0);
             if (!userExists)
                 return NotFound("Пользователь не найден");
 
-            // 1. Сохраняем сообщение пользователя в историю (1 = User)
             var userMsg = new AiChatHistory
             {
-                IdUser = dto.IdUser,
+                IdUser = idUser,
                 IdSender = 1,
-                MessageText = dto.Message.Trim(),
+                MessageText = message.Trim(),
                 CreatedAt = DateTime.Now
             };
             _context.AiChatHistories.Add(userMsg);
             await _context.SaveChangesAsync();
 
-            // 2. Алгоритм анализа запроса и подбора автомобиля
-            string query = dto.Message.ToLowerInvariant();
+            string query = message.ToLowerInvariant();
 
-            // Загружаем все доступные авто с их связями
             var allCars = await _context.Cars
                 .Where(c => c.IsDeleted == 0)
                 .Include(c => c.IdCategoryNavigation)
@@ -53,7 +48,6 @@ namespace TestDrive_API.Controllers
             var filteredCars = allCars.AsEnumerable();
             bool hasSpecificCriteria = false;
 
-            // Словарь синонимов для популярных брендов на русском
             var brandSynonyms = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 { "мерседес", "Mercedes" },
@@ -72,7 +66,6 @@ namespace TestDrive_API.Controllers
                 { "камри", "Camry" }
             };
 
-            // Проверка марки/модели/категории
             var matchedBrands = allCars
                 .Where(c =>
                 {
@@ -101,20 +94,17 @@ namespace TestDrive_API.Controllers
                 hasSpecificCriteria = true;
             }
 
-            // Поиск бюджета / цены (например: "до 2000", "до 5000", "до 3000000", "бюджет 4000")
             var priceMatch = Regex.Match(query, @"(?:до|бюджет|цена|стоимость)\s*(\d+(?:[\s.,]\d+)?)", RegexOptions.IgnoreCase);
             if (priceMatch.Success)
             {
                 string rawPrice = priceMatch.Groups[1].Value.Replace(" ", "").Replace(",", ".");
                 if (decimal.TryParse(rawPrice, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal targetPrice))
                 {
-                    // Если пользователь указал миллионы (например 3000000) или часовую цену (например 3000)
                     filteredCars = filteredCars.Where(c => c.Price <= targetPrice);
                     hasSpecificCriteria = true;
                 }
             }
 
-            // Проверка типа коробки передач
             if (query.Contains("автомат") || query.Contains("акпп"))
             {
                 filteredCars = filteredCars.Where(c => c.IdTreansmissionNavigation != null &&
@@ -134,7 +124,6 @@ namespace TestDrive_API.Controllers
                 hasSpecificCriteria = true;
             }
 
-            // Проверка типа топлива
             if (query.Contains("бензин"))
             {
                 filteredCars = filteredCars.Where(c => c.IdFuelTypeNavigation != null &&
@@ -154,7 +143,6 @@ namespace TestDrive_API.Controllers
                 hasSpecificCriteria = true;
             }
 
-            // Проверка мощности: "мощный", "быстрый", "от 200 л.с."
             var powerMatch = Regex.Match(query, @"(?:от|более|больше)\s*(\d+)\s*(?:л\.?с|сил|лс)?", RegexOptions.IgnoreCase);
             if (powerMatch.Success && int.TryParse(powerMatch.Groups[1].Value, out int minPower))
             {
@@ -169,43 +157,36 @@ namespace TestDrive_API.Controllers
 
             var recommendedList = filteredCars.Take(3).ToList();
 
-            // 3. Формирование ответа бота
             string botReply;
 
-            // Если это просто приветствие или вопрос (без конкретных критериев подбора)
             if (!hasSpecificCriteria && (query.Contains("привет") || query.Contains("здравствуй") || query.Contains("добрый день") || query.Contains("помоги") || string.IsNullOrWhiteSpace(query)))
             {
-                botReply = "Здравствуйте! Я умный ассистент автосалона KIDRIVE. Я помогу подобрать идеальный автомобиль для тест-драйва! " +
-                           "Напишите мне свои пожелания — например: «Нужен мощный седан до 4000 руб/час», «Ищу Mercedes на автомате» или «Покажи авто на бензине».";
+                botReply = "Привет! Напиши, какую машину ищешь: марку, бюджет, коробку или топливо.";
                 recommendedList = allCars.Take(2).ToList();
             }
             else if (!recommendedList.Any())
             {
-                botReply = "К сожалению, по точным критериям ничего не нашлось. Но в нашем автопарке есть отличные популярные модели, " +
-                           "которые вам наверняка понравятся! Рекомендую обратить внимание на:";
+                botReply = "По запросу ничего не нашлось. Вот популярные авто:";
                 recommendedList = allCars.Take(3).ToList();
                 for (int i = 0; i < recommendedList.Count; i++)
                 {
                     var c = recommendedList[i];
                     botReply += $"\n{i + 1}. {c.Model} ({c.YearCar} г.) — {c.Price:N0} ₽/час, {c.PowerHp} л.с., КПП: {c.IdTreansmissionNavigation?.Name ?? "Не указано"}.";
                 }
-                botReply += "\nВы можете оформить заявку на тест-драйв прямо сейчас!";
             }
             else
             {
-                botReply = "По вашему запросу я подобрал отличные автомобили для тест-драйва:\n";
+                botReply = "Подходящие варианты:\n";
                 for (int i = 0; i < recommendedList.Count; i++)
                 {
                     var c = recommendedList[i];
                     botReply += $"\n{i + 1}. {c.Model} ({c.YearCar} г.) — {c.Price:N0} ₽/час, мощность {c.PowerHp} л.с., топливо: {c.IdFuelTypeNavigation?.Name ?? "Бензин"}, КПП: {c.IdTreansmissionNavigation?.Name ?? "Автомат"}.";
                 }
-                botReply += "\n\nКакой из них хотите опробовать в деле? Выберите дату и время для бронирования!";
             }
 
-            // 4. Сохраняем ответ бота в историю (2 = Bot)
             var botMsg = new AiChatHistory
             {
-                IdUser = dto.IdUser,
+                IdUser = idUser,
                 IdSender = 2,
                 MessageText = botReply,
                 CreatedAt = DateTime.Now
@@ -231,9 +212,8 @@ namespace TestDrive_API.Controllers
             });
         }
 
-        // Получить историю сообщений пользователя
-        [HttpGet("History/{userId}")]
-        public async Task<IActionResult> GetChatHistory(int userId)
+        [HttpGet("GetHistory")]
+        public async Task<ActionResult> GetChatHistory(int userId)
         {
             var history = await _context.AiChatHistories
                 .Where(h => h.IdUser == userId)
@@ -252,9 +232,8 @@ namespace TestDrive_API.Controllers
             return Ok(history);
         }
 
-        // Очистить историю сообщений пользователя
-        [HttpDelete("History/{userId}")]
-        public async Task<IActionResult> ClearHistory(int userId)
+        [HttpDelete("ClearHistory")]
+        public async Task<ActionResult> ClearHistory(int userId)
         {
             var messages = await _context.AiChatHistories
                 .Where(h => h.IdUser == userId)
@@ -263,7 +242,6 @@ namespace TestDrive_API.Controllers
             _context.AiChatHistories.RemoveRange(messages);
             await _context.SaveChangesAsync();
 
-            // Если в таблице больше нет сообщений, сбрасываем AUTO_INCREMENT на 1
             if (!await _context.AiChatHistories.AnyAsync())
             {
                 try

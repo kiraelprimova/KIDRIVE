@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TestDrive_API.Models;
 
 namespace TestDrive_API.Controllers
@@ -14,16 +15,17 @@ namespace TestDrive_API.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public IActionResult GetAllTransmissions()
+        [HttpGet("GetAllTransmissions")]
+        public async Task<ActionResult> GetAllTransmissions()
         {
-            return Ok(_context.Transmissions.ToList());
+            var transmissions = await _context.Transmissions.ToListAsync();
+            return Ok(transmissions);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetTransmission(int id)
+        [HttpGet("GetTransmission")]
+        public async Task<ActionResult> GetTransmission(int id)
         {
-            var transmission = _context.Transmissions.Find(id);
+            var transmission = await _context.Transmissions.FindAsync(id);
             if (transmission == null)
                 return NotFound();
 

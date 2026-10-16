@@ -18,9 +18,8 @@ namespace TestDrive_API.Controllers
             _validation = validation;
         }
 
-        // Получение полного списка автомобилей
         [HttpGet("GetAllCars")]
-        public async Task<IActionResult> GetAllCars()
+        public async Task<ActionResult> GetAllCars()
         {
             var cars = await _context.Cars
                 .Where(c => c.IsDeleted == 0)
@@ -29,13 +28,8 @@ namespace TestDrive_API.Controllers
             return Ok(cars);
         }
 
-        [HttpGet]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetAllCarsLegacy() => GetAllCars();
-
-        // Получение конкретного автомобиля
-        [HttpGet("GetCar/{id}")]
-        public async Task<IActionResult> GetCar(int id)
+        [HttpGet("GetCar")]
+        public async Task<ActionResult> GetCar(int id)
         {
             var car = await _context.Cars
                 .FirstOrDefaultAsync(c => c.IdCar == id && c.IsDeleted == 0);
@@ -46,30 +40,13 @@ namespace TestDrive_API.Controllers
             return Ok(car);
         }
 
-        [HttpGet("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> GetCarLegacy(int id) => GetCar(id);
-
-        // Добавление автомобиля
         [HttpPost("AddCar")]
-        public async Task<IActionResult> AddCar(CarDTO dto)
+        public async Task<ActionResult> AddCar(Car car)
         {
-            if (dto == null)
+            if (car == null)
                 return BadRequest("Неверные данные");
 
-            var car = new Car
-            {
-                IdCategory = dto.IdCategory,
-                Model = dto.Model,
-                YearCar = (short)dto.YearCar,
-                Description = dto.Description,
-                ImagePath = dto.ImagePath,
-                IsDeleted = 0,
-                Price = dto.Price,
-                PowerHp = dto.PowerHp,
-                IdFuelType = dto.IdFuelType,
-                IdTreansmission = dto.IdTreansmission,
-            };
+            car.IsDeleted = 0;
 
             var validationResult = _validation.ValidateCar(car);
             if (validationResult != null)
@@ -81,15 +58,10 @@ namespace TestDrive_API.Controllers
             return Ok("Автомобиль добавлен");
         }
 
-        [HttpPost]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> AddCarLegacy(CarDTO dto) => AddCar(dto);
-
-        // Изменение автомобиля
-        [HttpPut("EditCar/{id}")]
-        public async Task<IActionResult> UpdateCar(int id, CarDTO dto)
+        [HttpPut("EditCar")]
+        public async Task<ActionResult> UpdateCar(int id, Car model)
         {
-            if (dto == null)
+            if (model == null)
                 return BadRequest("Неверные данные");
 
             var car = await _context.Cars.FindAsync(id);
@@ -102,15 +74,15 @@ namespace TestDrive_API.Controllers
                 return BadRequest("Автомобиль сейчас забронирован. Изменение невозможно");
             }
 
-            car.IdCategory = dto.IdCategory;
-            car.Model = dto.Model;
-            car.YearCar = (short)dto.YearCar;
-            car.Description = dto.Description;
-            car.ImagePath = dto.ImagePath;
-            car.Price = dto.Price;
-            car.PowerHp = dto.PowerHp;
-            car.IdFuelType = dto.IdFuelType;
-            car.IdTreansmission = dto.IdTreansmission;
+            car.IdCategory = model.IdCategory;
+            car.Model = model.Model;
+            car.YearCar = model.YearCar;
+            car.Description = model.Description;
+            car.ImagePath = model.ImagePath;
+            car.Price = model.Price;
+            car.PowerHp = model.PowerHp;
+            car.IdFuelType = model.IdFuelType;
+            car.IdTreansmission = model.IdTreansmission;
 
             var validationResult = _validation.ValidateCar(car);
             if (validationResult != null)
@@ -121,13 +93,8 @@ namespace TestDrive_API.Controllers
             return Ok("Автомобиль обновлён");
         }
 
-        [HttpPut("{id}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public Task<IActionResult> UpdateCarLegacy(int id, CarDTO dto) => UpdateCar(id, dto);
-
-        // Удаление автомобиля (мягкое)
-        [HttpPut("DeleteCar/{id}")]
-        public async Task<IActionResult> DeleteCar(int id)
+        [HttpPut("DeleteCar")]
+        public async Task<ActionResult> DeleteCar(int id)
         {
             var car = await _context.Cars.FindAsync(id);
 
@@ -146,9 +113,8 @@ namespace TestDrive_API.Controllers
             return Ok("Автомобиль удалён");
         }
 
-        // Восстановление автомобиля
-        [HttpPut("RestoreCar/{id}")]
-        public async Task<IActionResult> RestoreCar(int id)
+        [HttpPut("RestoreCar")]
+        public async Task<ActionResult> RestoreCar(int id)
         {
             var car = await _context.Cars.FindAsync(id);
 
@@ -162,13 +128,11 @@ namespace TestDrive_API.Controllers
             return Ok("Автомобиль восстановлен");
         }
 
-        // Проверка наличия активного бронирования (Исправлено)
         private async Task<bool> HasActiveBookingAsync(int carId)
         {
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
             TimeOnly nowTime = TimeOnly.FromDateTime(DateTime.Now);
 
-            // Получаем бронирования автомобиля на сегодня или будущее
             var bookings = await _context.Bookings
                 .Where(b => b.IdCar == carId && b.IdStatus == 2 && b.BookingDate >= today)
                 .ToListAsync();
@@ -179,9 +143,8 @@ namespace TestDrive_API.Controllers
             );
         }
 
-        // Получение занятого времени автомобиля
         [HttpGet("GetBusyTimes")]
-        public async Task<IActionResult> GetBusyTimes(int carId, string date)
+        public async Task<ActionResult> GetBusyTimes(int carId, string date)
         {
             if (!DateOnly.TryParse(date, out DateOnly selectedDate))
                 return BadRequest("Неверный формат даты");

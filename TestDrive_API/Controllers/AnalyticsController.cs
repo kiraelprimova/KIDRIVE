@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TestDrive_API.Models;
 
@@ -16,16 +16,14 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpGet("Dashboard")]
-        public async Task<IActionResult> Dashboard()
+        public async Task<ActionResult> Dashboard()
         {
-            // Считаем только активные (не удаленные) автомобили
             var totalCars = await _context.Cars.CountAsync(c => c.IsDeleted == 0);
             var totalBookings = await _context.Bookings.CountAsync();
             var totalClients = await _context.Users.CountAsync(u => u.IsDelete == 0 && u.IdRole == 1);
 
             var confirmedBookings = await _context.Bookings.CountAsync(b => b.IdStatus == 2);
 
-            // Безопасное вычисление суммы с дефолтным значением 0
             decimal revenue = await _context.Bookings
                 .Where(b => b.IdStatus == 2)
                 .SumAsync(b => (decimal?)b.IdCarNavigation.Price) ?? 0m;
@@ -40,9 +38,8 @@ namespace TestDrive_API.Controllers
             });
         }
 
-        // Популярные машины
         [HttpGet("PopularCars")]
-        public async Task<IActionResult> PopularCars()
+        public async Task<ActionResult> PopularCars()
         {
             var data = await _context.Bookings
                 .GroupBy(b => b.IdCarNavigation.Model)
@@ -58,9 +55,8 @@ namespace TestDrive_API.Controllers
             return Ok(data);
         }
 
-        // Статусы бронирований
         [HttpGet("BookingStatuses")]
-        public async Task<IActionResult> BookingStatuses()
+        public async Task<ActionResult> BookingStatuses()
         {
             var data = await _context.Bookings
                 .GroupBy(b => b.IdStatusNavigation.StatusName)
@@ -74,9 +70,8 @@ namespace TestDrive_API.Controllers
             return Ok(data);
         }
 
-        // Частые даты бронирований
         [HttpGet("BookingsByDate")]
-        public async Task<IActionResult> BookingsByDate()
+        public async Task<ActionResult> BookingsByDate()
         {
             var data = await _context.Bookings
                 .GroupBy(b => b.BookingDate)
@@ -91,9 +86,8 @@ namespace TestDrive_API.Controllers
             return Ok(data);
         }
 
-        // Популярные бренды / категории автомобилей
         [HttpGet("PopularBrands")]
-        public async Task<IActionResult> PopularBrands()
+        public async Task<ActionResult> PopularBrands()
         {
             var data = await _context.Bookings
                 .GroupBy(b => b.IdCarNavigation.IdCategoryNavigation.NameCategory)
