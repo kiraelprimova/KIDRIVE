@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Users\darina\Desktop\Курсовая\TestDrive\TestDrive\obj\Debug\net8.0-windows\
+C:\Users\kira\Desktop\kidrive\админское настольное приложение\TestDrive\obj\Debug\net8.0-windows\
 TestDrive
 none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\darina\Desktop\Курсовая\TestDrive\TestDrive\App.xaml
+C:\Users\kira\Desktop\kidrive\админское настольное приложение\TestDrive\App.xaml
 19-670926758
 
 32-1315750453
-220-2114508582
+220-903786985
 UserControls\BookingCard.xaml;UserControls\CarCard.xaml;UserControls\ManagerBookingCard.xaml;UserControls\ManagerCarCard.xaml;Windows\AddCarWindow.xaml;Windows\BookingWindow.xaml;Windows\CarDetailsWindow.xaml;Windows\CatalogWindow.xaml;Windows\EditCarWindow.xaml;Windows\ForgotPasswordWindow.xaml;Windows\MainWindow.xaml;Windows\ManagerAnalyticsWindow.xaml;Windows\ManagerBookingsWindow.xaml;Windows\ManagerCarsWindow.xaml;Windows\ManagerProfileWindow.xaml;Windows\MyBookingsWindow.xaml;Windows\ProfileWindow.xaml;Windows\RegistrationWindow.xaml;Windows\WelcomeWindow.xaml;
 
 False

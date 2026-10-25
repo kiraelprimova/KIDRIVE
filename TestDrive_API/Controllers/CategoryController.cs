@@ -16,6 +16,7 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpGet("GetAllCategories")]
+        [HttpGet]
         public async Task<ActionResult> GetAllCategories()
         {
             var categories = await _context.Categories.ToListAsync();
@@ -23,6 +24,8 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpGet("GetCategory")]
+        [HttpGet("{id}")]
+        [HttpGet("GetCategory/{id}")]
         public async Task<ActionResult> GetCategory(int id)
         {
             var category = await _context.Categories.FindAsync(id);

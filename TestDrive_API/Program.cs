@@ -20,6 +20,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 builder.Services.AddScoped<ValidationHelper>();
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -39,8 +42,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
+app.UseCors();
 app.UseAuthorization();
 
 app.MapControllers();

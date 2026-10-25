@@ -19,6 +19,7 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpGet("GetAllCars")]
+        [HttpGet]
         public async Task<ActionResult> GetAllCars()
         {
             var cars = await _context.Cars
@@ -29,6 +30,8 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpGet("GetCar")]
+        [HttpGet("{id}")]
+        [HttpGet("GetCar/{id}")]
         public async Task<ActionResult> GetCar(int id)
         {
             var car = await _context.Cars
@@ -41,6 +44,7 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpPost("AddCar")]
+        [HttpPost]
         public async Task<ActionResult> AddCar(Car car)
         {
             if (car == null)
@@ -59,6 +63,8 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpPut("EditCar")]
+        [HttpPut("{id}")]
+        [HttpPut("EditCar/{id}")]
         public async Task<ActionResult> UpdateCar(int id, Car model)
         {
             if (model == null)
@@ -80,9 +86,9 @@ namespace TestDrive_API.Controllers
             car.Description = model.Description;
             car.ImagePath = model.ImagePath;
             car.Price = model.Price;
-            car.PowerHp = model.PowerHp;
-            car.IdFuelType = model.IdFuelType;
-            car.IdTreansmission = model.IdTreansmission;
+            if (model.PowerHp.HasValue && model.PowerHp.Value > 0) car.PowerHp = model.PowerHp;
+            if (model.IdFuelType.HasValue && model.IdFuelType.Value > 0) car.IdFuelType = model.IdFuelType;
+            if (model.IdTreansmission.HasValue && model.IdTreansmission.Value > 0) car.IdTreansmission = model.IdTreansmission;
 
             var validationResult = _validation.ValidateCar(car);
             if (validationResult != null)
@@ -94,6 +100,9 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpPut("DeleteCar")]
+        [HttpPut("DeleteCar/{id}")]
+        [HttpDelete("{id}")]
+        [HttpDelete("DeleteCar/{id}")]
         public async Task<ActionResult> DeleteCar(int id)
         {
             var car = await _context.Cars.FindAsync(id);

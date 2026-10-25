@@ -109,6 +109,8 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpPut("UpdateStatus")]
+        [HttpPut("{id}")]
+        [HttpPut("UpdateStatus/{id}")]
         public async Task<ActionResult> UpdateBookingStatus(int id, int statusId)
         {
             var booking = await _context.Bookings.FindAsync(id);

@@ -85,6 +85,7 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpGet("GetAllClients")]
+        [HttpGet]
         public async Task<ActionResult> GetAllClients()
         {
             var clients = await _context.Users.Where(u => u.IsDelete == 0).ToListAsync();
@@ -92,6 +93,8 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpGet("GetClient")]
+        [HttpGet("{id}")]
+        [HttpGet("GetClient/{id}")]
         public async Task<ActionResult> GetClient(int id)
         {
             var user = await _context.Users
@@ -104,6 +107,8 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpPut("UpdateClient")]
+        [HttpPut("{id}")]
+        [HttpPut("UpdateClient/{id}")]
         public async Task<ActionResult> UpdateClient(int id, User model)
         {
             if (model == null)
@@ -144,6 +149,9 @@ namespace TestDrive_API.Controllers
         }
 
         [HttpPut("DeleteUser")]
+        [HttpPut("DeleteUser/{id}")]
+        [HttpDelete("{id}")]
+        [HttpDelete("DeleteUser/{id}")]
         public async Task<ActionResult> DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
