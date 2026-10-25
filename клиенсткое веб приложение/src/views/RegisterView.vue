@@ -63,7 +63,14 @@
             @click="showPassword = !showPassword"
             tabindex="-1"
           >
-            👁
+            <svg v-if="!showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
           </button>
         </div>
         <span class="hint-text">Минимум 8 символов</span>
@@ -84,7 +91,14 @@
             @click="showConfirmPassword = !showConfirmPassword"
             tabindex="-1"
           >
-            👁
+            <svg v-if="!showConfirmPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
           </button>
         </div>
       </div>
@@ -126,6 +140,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { apiClient } from '../api';
 import { formatPhoneNumber, capitalizeName, isAdult, validatePassword } from '../auth';
+import { showToast } from '../notifications';
 
 const router = useRouter();
 
@@ -160,61 +175,58 @@ function onPhoneInput(e) {
 
 async function handleRegister() {
   if (!firstName.value || !firstName.value.trim()) {
-    alert('Введите имя');
+    showToast('Введите имя', 'warning');
     return;
   }
   if (!lastName.value || !lastName.value.trim()) {
-    alert('Введите фамилию');
+    showToast('Введите фамилию', 'warning');
     return;
   }
   if (!phone.value || !phone.value.trim()) {
-    alert('Введите номер телефона');
+    showToast('Введите номер телефона', 'warning');
     return;
   }
 
   const phoneDigits = phone.value.replace(/\D/g, '');
   if (phoneDigits.length !== 11) {
-    alert('Введите полный номер телефона');
+    showToast('Введите полный номер телефона (11 цифр)', 'warning');
     return;
   }
   if (!phoneDigits.startsWith('7') && !phoneDigits.startsWith('8')) {
-    alert('Номер должен начинаться с +7 или 8');
+    showToast('Номер должен начинаться с +7 или 8', 'warning');
     return;
   }
 
   if (!password.value || !password.value.trim()) {
-    alert('Введите пароль');
+    showToast('Введите пароль', 'warning');
     return;
   }
   if (password.value.length < 8) {
-    alert('Пароль должен содержать минимум 8 символов');
+    showToast('Пароль должен содержать минимум 8 символов', 'warning');
     return;
   }
   if (!validatePassword(password.value)) {
-    alert(
-      'Пароль должен содержать:\n' +
-      '- минимум 8 символов\n' +
-      '- хотя бы одну цифру\n' +
-      '- хотя бы одну заглавную букву\n' +
-      '- хотя бы одну строчную букву\n' +
-      '- хотя бы один спецсимвол'
+    showToast(
+      'Пароль должен содержать: минимум 8 символов, цифру, строчную, заглавную букву и спецсимвол',
+      'warning',
+      5000
     );
     return;
   }
   if (!confirmPassword.value || !confirmPassword.value.trim()) {
-    alert('Подтвердите пароль');
+    showToast('Подтвердите пароль', 'warning');
     return;
   }
   if (password.value !== confirmPassword.value) {
-    alert('Пароли не совпадают');
+    showToast('Пароли не совпадают', 'error');
     return;
   }
   if (!birthDate.value) {
-    alert('Выберите дату рождения');
+    showToast('Выберите дату рождения', 'warning');
     return;
   }
   if (!isAdult(birthDate.value)) {
-    alert('Регистрация доступна только с 18 лет');
+    showToast('Регистрация доступна только с 18 лет', 'warning');
     return;
   }
 
@@ -231,11 +243,11 @@ async function handleRegister() {
   loading.value = true;
   try {
     const res = await apiClient.register(dto);
-    alert(typeof res === 'string' ? res : 'Регистрация прошла успешно!');
+    showToast(typeof res === 'string' ? res : 'Регистрация прошла успешно!', 'success');
     router.push('/login');
   } catch (err) {
     const errorText = err.response?.data || err.message || 'Ошибка регистрации';
-    alert(typeof errorText === 'string' ? errorText : JSON.stringify(errorText));
+    showToast(typeof errorText === 'string' ? errorText : JSON.stringify(errorText), 'error');
   } finally {
     loading.value = false;
   }
@@ -311,9 +323,16 @@ function goToLogin() {
   right: 10px;
   background: transparent;
   border: none;
-  font-size: 14px;
   cursor: pointer;
-  color: #666666;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.toggle-eye:hover {
+  color: #111827;
 }
 
 .hint-text {

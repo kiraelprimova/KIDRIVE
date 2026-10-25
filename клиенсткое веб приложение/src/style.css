@@ -12,10 +12,12 @@ html, body, #app {
   min-height: 100vh;
   background-color: #F5F5F5;
   color: #111827;
+  font-size: 14px;
 }
 
 input, button, select, textarea {
   font-family: inherit;
+  font-size: 14px;
 }
 
 button {

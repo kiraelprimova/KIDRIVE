@@ -2,25 +2,27 @@
   <div class="profile-page">
     <div class="profile-card">
       <div class="card-header">
-        <h1 class="profile-title">Профиль</h1>
+        <div>
+          <h1 class="profile-title">Профиль</h1>
+          <p class="profile-sub">Управляйте личными данными вашего аккаунта</p>
+        </div>
 
         <div class="actions-group">
-          <!-- Кнопка Редактировать / Сохранить -->
+          <!-- Кнопка Изменить пароль -->
           <button
-            class="btn-edit"
-            @click="handleEditToggle"
-            :disabled="saving"
+            class="btn-change-pwd"
+            @click="goToChangePassword"
           >
-            {{ isEditing ? (saving ? 'Сохранение...' : 'Сохранить') : 'Редактировать' }}
+            Изменить пароль
           </button>
 
-          <!-- Кнопка Отменить -->
+          <!-- Кнопка Сохранить изменения -->
           <button
-            v-if="isEditing"
-            class="btn-cancel"
-            @click="cancelEdit"
+            class="btn-save"
+            @click="saveProfile"
+            :disabled="saving"
           >
-            Отменить
+            {{ saving ? 'Сохранение...' : 'Сохранить изменения' }}
           </button>
 
           <!-- Кнопка Удалить аккаунт -->
@@ -34,28 +36,28 @@
         </div>
       </div>
 
-      <!-- Поля профиля -->
+      <!-- Поля профиля: всегда открыты для ввода -->
       <div class="profile-fields">
         <div class="field-item">
-          <label class="field-label">Имя</label>
+          <label class="field-label">Имя *</label>
           <input
             type="text"
             v-model="firstName"
             @input="onFirstNameInput"
-            maxlength="10"
-            :disabled="!isEditing"
+            maxlength="20"
+            placeholder="Ваше имя"
             class="profile-input"
           />
         </div>
 
         <div class="field-item">
-          <label class="field-label">Фамилия</label>
+          <label class="field-label">Фамилия *</label>
           <input
             type="text"
             v-model="lastName"
             @input="onLastNameInput"
-            maxlength="15"
-            :disabled="!isEditing"
+            maxlength="25"
+            placeholder="Ваша фамилия"
             class="profile-input"
           />
         </div>
@@ -66,86 +68,45 @@
             type="text"
             v-model="patronymic"
             @input="onPatronymicInput"
-            maxlength="15"
-            :disabled="!isEditing"
+            maxlength="25"
+            placeholder="Ваше отчество (если есть)"
             class="profile-input"
           />
         </div>
 
         <div class="field-item">
-          <label class="field-label">Телефон</label>
+          <label class="field-label">Номер телефона *</label>
           <input
             type="text"
             :value="phone"
             @input="onPhoneInput"
             maxlength="20"
             placeholder="+7 (___) ___-__-__"
-            :disabled="!isEditing"
             class="profile-input"
           />
+          <span class="field-hint">Проверяется на уникальность среди аккаунтов</span>
         </div>
 
         <div class="field-item">
-          <label class="field-label">Почта</label>
+          <label class="field-label">Электронная почта *</label>
           <input
             type="email"
             v-model="email"
-            maxlength="30"
-            :disabled="!isEditing"
+            maxlength="40"
+            placeholder="example@mail.ru"
             class="profile-input"
           />
+          <span class="field-hint">Проверяется на уникальность среди аккаунтов</span>
         </div>
 
         <div class="field-item">
-          <label class="field-label">Пароль</label>
-          <div class="password-box">
-            <input
-              :type="showPassword ? 'text' : 'password'"
-              v-model="password"
-              maxlength="20"
-              :disabled="!isEditing"
-              class="profile-input password-input"
-            />
-            <button
-              type="button"
-              class="eye-btn"
-              @click="showPassword = !showPassword"
-              tabindex="-1"
-            >
-              👁
-            </button>
-          </div>
-        </div>
-
-        <div class="field-item">
-          <label class="field-label">Повторите пароль</label>
-          <div class="password-box">
-            <input
-              :type="showConfirmPassword ? 'text' : 'password'"
-              v-model="confirmPassword"
-              maxlength="20"
-              :disabled="!isEditing"
-              class="profile-input password-input"
-            />
-            <button
-              type="button"
-              class="eye-btn"
-              @click="showConfirmPassword = !showConfirmPassword"
-              tabindex="-1"
-            >
-              👁
-            </button>
-          </div>
-        </div>
-
-        <div class="field-item">
-          <label class="field-label">Дата рождения</label>
+          <label class="field-label">Дата рождения *</label>
           <input
             type="date"
             v-model="birthDate"
-            :disabled="!isEditing"
             class="profile-input"
           />
+          <span class="field-hint">Доступно только лицам старше 18 лет</span>
         </div>
       </div>
     </div>
@@ -162,13 +123,12 @@ import {
   logout,
   formatPhoneNumber,
   capitalizeName,
-  isAdult,
-  validatePassword
+  isAdult
 } from '../auth';
+import { showToast, showConfirm } from '../notifications';
 
 const router = useRouter();
 
-const isEditing = ref(false);
 const saving = ref(false);
 const deleting = ref(false);
 
@@ -177,15 +137,10 @@ const lastName = ref('');
 const patronymic = ref('');
 const phone = ref('');
 const email = ref('');
-const password = ref('');
-const confirmPassword = ref('');
 const birthDate = ref('');
 
-const showPassword = ref(false);
-const showConfirmPassword = ref(false);
-
-// Исходные данные для отката
-let originalData = {};
+// Храним пароль пользователя, чтобы не затереть его при обычном обновлении профиля
+let existingPassword = '';
 
 onMounted(async () => {
   await loadUserData();
@@ -202,41 +157,15 @@ async function loadUserData() {
     patronymic.value = user.patronymic || '';
     phone.value = user.phone || '';
     email.value = user.email || '';
-    password.value = user.password || '';
-    confirmPassword.value = user.password || '';
+    existingPassword = user.password || '';
 
     if (user.birthDate) {
       birthDate.value = String(user.birthDate).split('T')[0];
     }
-
-    saveOriginal();
   } catch (err) {
     console.error('Ошибка загрузки профиля:', err);
+    showToast('Не удалось загрузить данные профиля', 'error');
   }
-}
-
-function saveOriginal() {
-  originalData = {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    patronymic: patronymic.value,
-    phone: phone.value,
-    email: email.value,
-    password: password.value,
-    confirmPassword: confirmPassword.value,
-    birthDate: birthDate.value,
-  };
-}
-
-function restoreOriginal() {
-  firstName.value = originalData.firstName || '';
-  lastName.value = originalData.lastName || '';
-  patronymic.value = originalData.patronymic || '';
-  phone.value = originalData.phone || '';
-  email.value = originalData.email || '';
-  password.value = originalData.password || '';
-  confirmPassword.value = originalData.confirmPassword || '';
-  birthDate.value = originalData.birthDate || '';
 }
 
 function onFirstNameInput(e) {
@@ -257,92 +186,110 @@ function onPhoneInput(e) {
   e.target.value = formatted;
 }
 
-function handleEditToggle() {
-  if (!isEditing.value) {
-    isEditing.value = true;
-  } else {
-    saveProfile();
-  }
+function goToChangePassword() {
+  router.push('/app/change-password');
 }
 
-function cancelEdit() {
-  restoreOriginal();
-  isEditing.value = false;
+function cleanDigits(val) {
+  return String(val || '').replace(/\D/g, '');
+}
+
+async function checkPhoneAndEmailUnique(newPhone, newEmail, currentUserId) {
+  try {
+    const clients = await apiClient.getAllClients();
+    if (!Array.isArray(clients)) return { ok: true };
+
+    const cleanNewPhone = cleanDigits(newPhone);
+    const normalizedNewPhone = cleanNewPhone.startsWith('8') ? '7' + cleanNewPhone.substring(1) : cleanNewPhone;
+    const cleanNewEmail = String(newEmail || '').trim().toLowerCase();
+
+    for (const client of clients) {
+      const clientId = client.idUser || client.IdUser;
+      if (Number(clientId) === Number(currentUserId)) {
+        continue; // Свой аккаунт пропускаем
+      }
+
+      // Проверка телефона
+      const clientPhoneDigits = cleanDigits(client.phone);
+      const normalizedClientPhone = clientPhoneDigits.startsWith('8') ? '7' + clientPhoneDigits.substring(1) : clientPhoneDigits;
+      if (normalizedNewPhone && normalizedClientPhone && normalizedNewPhone === normalizedClientPhone) {
+        return {
+          ok: false,
+          error: 'Пользователь с таким номером телефона уже существует!'
+        };
+      }
+
+      // Проверка почты
+      const clientEmail = String(client.email || '').trim().toLowerCase();
+      if (cleanNewEmail && clientEmail && cleanNewEmail === clientEmail) {
+        return {
+          ok: false,
+          error: 'Пользователь с таким адресом электронной почты уже существует!'
+        };
+      }
+    }
+
+    return { ok: true };
+  } catch (err) {
+    console.warn('Не удалось проверить уникальность через GetAllClients:', err);
+    return { ok: true };
+  }
 }
 
 async function saveProfile() {
   if (!firstName.value || !firstName.value.trim()) {
-    alert('Введите имя');
+    showToast('Введите имя', 'warning');
     return;
   }
   if (!lastName.value || !lastName.value.trim()) {
-    alert('Введите фамилию');
+    showToast('Введите фамилию', 'warning');
     return;
   }
   if (!phone.value || !phone.value.trim()) {
-    alert('Введите номер телефона');
+    showToast('Введите номер телефона', 'warning');
     return;
   }
 
   const phoneDigits = phone.value.replace(/\D/g, '');
   if (phoneDigits.length !== 11) {
-    alert('Введите полный номер телефона');
+    showToast('Введите полный номер телефона (11 цифр)', 'warning');
     return;
   }
   if (!phoneDigits.startsWith('7') && !phoneDigits.startsWith('8')) {
-    alert('Номер должен начинаться с +7 или 8');
+    showToast('Номер должен начинаться с +7 или 8', 'warning');
     return;
   }
 
   if (!email.value || !email.value.trim()) {
-    alert('Введите электронную почту');
+    showToast('Введите электронную почту', 'warning');
     return;
   }
   if (/[А-Яа-яЁё]/.test(email.value)) {
-    alert('Email не должен содержать русские буквы');
+    showToast('Email не должен содержать русские буквы', 'warning');
     return;
   }
   const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
   if (!emailRegex.test(email.value)) {
-    alert('Введите корректный email');
-    return;
-  }
-
-  if (!password.value || !password.value.trim()) {
-    alert('Введите пароль');
-    return;
-  }
-  if (password.value.length < 8) {
-    alert('Пароль должен содержать минимум 8 символов');
-    return;
-  }
-  if (!validatePassword(password.value)) {
-    alert(
-      'Пароль должен содержать:\n' +
-      '- минимум 8 символов\n' +
-      '- хотя бы одну цифру\n' +
-      '- хотя бы одну заглавную букву\n' +
-      '- хотя бы одну строчную букву\n' +
-      '- хотя бы один спецсимвол'
-    );
-    return;
-  }
-
-  if (!confirmPassword.value || !confirmPassword.value.trim()) {
-    alert('Подтвердите пароль');
-    return;
-  }
-  if (password.value !== confirmPassword.value) {
-    alert('Пароли не совпадают');
+    showToast('Введите корректный email (например, user@mail.ru)', 'warning');
     return;
   }
 
   if (!birthDate.value) {
-    alert('Выберите дату рождения');
+    showToast('Выберите дату рождения', 'warning');
     return;
   }
   if (!isAdult(birthDate.value)) {
-    alert('Редактирование доступно только с 18 лет');
+    showToast('Сервис доступен только лицам с 18 лет', 'warning');
+    return;
+  }
+
+  saving.value = true;
+
+  // Проверка уникальности телефона и почты
+  const uniqueCheck = await checkPhoneAndEmailUnique(phone.value, email.value, authState.userId);
+  if (!uniqueCheck.ok) {
+    showToast(uniqueCheck.error, 'error', 4500);
+    saving.value = false;
     return;
   }
 
@@ -352,16 +299,13 @@ async function saveProfile() {
     patronymic: (patronymic.value || '').trim(),
     phone: phone.value,
     email: email.value.trim(),
-    password: password.value,
+    password: existingPassword, // сохраняем существующий пароль
     birthDate: birthDate.value,
   };
 
-  saving.value = true;
   try {
     const res = await apiClient.updateUser(authState.userId, payload);
-    alert(typeof res === 'string' ? res : 'Профиль успешно обновлен!');
-    saveOriginal();
-    isEditing.value = false;
+    showToast(typeof res === 'string' ? res : 'Профиль успешно обновлен!', 'success');
 
     // Обновляем данные пользователя в authState
     setUser({
@@ -370,25 +314,28 @@ async function saveProfile() {
     });
   } catch (err) {
     const errorText = err.response?.data || err.message || 'Ошибка обновления профиля';
-    alert(typeof errorText === 'string' ? errorText : JSON.stringify(errorText));
+    showToast(typeof errorText === 'string' ? errorText : JSON.stringify(errorText), 'error');
   } finally {
     saving.value = false;
   }
 }
 
 async function deleteAccount() {
-  const confirmed = confirm('Вы уверены, что хотите удалить свой аккаунт?');
+  const confirmed = await showConfirm(
+    'Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя будет отменить.',
+    'Удаление аккаунта'
+  );
   if (!confirmed) return;
 
   deleting.value = true;
   try {
     await apiClient.deleteUser(authState.userId);
-    alert('Аккаунт успешно удален');
+    showToast('Аккаунт успешно удален', 'info');
     logout();
     router.push('/login');
   } catch (err) {
     const errorText = err.response?.data || err.message || 'Ошибка удаления аккаунта';
-    alert(typeof errorText === 'string' ? errorText : JSON.stringify(errorText));
+    showToast(typeof errorText === 'string' ? errorText : JSON.stringify(errorText), 'error');
   } finally {
     deleting.value = false;
   }
@@ -397,155 +344,163 @@ async function deleteAccount() {
 
 <style scoped>
 .profile-page {
-  padding: 40px;
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .profile-card {
   background-color: #ffffff;
-  border-radius: 15px;
-  padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+  padding: 32px 36px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid #E5E7EB;
 }
 
 .card-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-bottom: 1px solid #F3F4F6;
+  padding-bottom: 20px;
+  margin-bottom: 28px;
 }
 
 .profile-title {
-  font-size: 30px;
-  font-weight: bold;
+  font-size: 26px;
+  font-weight: 700;
   color: #111827;
+  margin: 0;
+}
+
+.profile-sub {
+  font-size: 13.5px;
+  color: #6B7280;
+  margin: 4px 0 0 0;
 }
 
 .actions-group {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.btn-edit {
-  width: 160px;
-  height: 40px;
+.btn-change-pwd {
+  height: 38px;
+  padding: 0 16px;
+  background-color: #EFF6FF;
+  color: #1E3A8A;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-change-pwd:hover {
+  background-color: #DBEAFE;
+}
+
+.btn-save {
+  height: 38px;
+  padding: 0 18px;
   background-color: #1E3A8A;
   color: #ffffff;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 10px;
   border: none;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: background-color 0.15s ease;
 }
 
-.btn-cancel {
-  width: 160px;
-  height: 40px;
-  background-color: #DC2626;
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.btn-save:hover {
+  background-color: #172554;
 }
 
 .btn-delete {
-  width: 160px;
-  height: 40px;
-  background-color: #DC2626;
-  color: #ffffff;
+  height: 38px;
+  padding: 0 14px;
+  background-color: transparent;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
   font-size: 13px;
-  font-weight: 600;
-  border-radius: 10px;
-  border: none;
+  font-weight: 500;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: all 0.15s ease;
 }
 
-.btn-edit:disabled,
-.btn-delete:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.btn-delete:hover {
+  background-color: #FEF2F2;
+  border-color: #F87171;
 }
 
+/* Поля профиля */
 .profile-fields {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
 }
 
 .field-item {
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
 }
 
 .field-label {
-  font-size: 13px;
-  color: #111827;
-  margin-bottom: 3px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
 }
 
 .profile-input {
-  height: 36px;
-  padding: 0 10px;
+  height: 42px;
+  padding: 0 14px;
+  background-color: #F9FAFB;
   border: 1px solid #D1D5DB;
-  border-radius: 4px;
-  background-color: #ffffff;
+  border-radius: 8px;
   font-size: 14px;
   color: #111827;
+  outline: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
-.profile-input:disabled {
-  background-color: #F9FAFB;
-  color: #6B7280;
-  cursor: not-allowed;
+.profile-input:focus {
+  border-color: #1E3A8A;
+  background-color: #ffffff;
 }
 
-.password-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.password-input {
-  width: 100%;
-  padding-right: 40px;
-}
-
-.eye-btn {
-  position: absolute;
-  right: 10px;
-  background: transparent;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  color: #666666;
+.field-hint {
+  font-size: 12px;
+  color: #9CA3AF;
+  margin-top: 5px;
 }
 
 @media (max-width: 768px) {
   .profile-page {
-    padding: 20px 10px;
+    padding: 16px;
+  }
+  .profile-fields {
+    grid-template-columns: 1fr;
   }
   .card-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
   }
   .actions-group {
-    flex-wrap: wrap;
     width: 100%;
   }
-  .btn-edit, .btn-cancel, .btn-delete {
+  .btn-save, .btn-change-pwd, .btn-delete {
     width: 100%;
+    justify-content: center;
   }
 }
 </style>

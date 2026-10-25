@@ -110,6 +110,7 @@
 import { ref, computed } from 'vue';
 import { apiClient } from '../api';
 import { authState } from '../auth';
+import { showToast } from '../notifications';
 
 const props = defineProps({
   car: {
@@ -159,8 +160,10 @@ const maxDateStr = computed(() => {
 });
 
 const carImageSrc = computed(() => {
-  if (!props.car.imagePath) return '/Resources/заглушка.png';
-  return `/Resources/${props.car.imagePath}`;
+  const path = props.car?.imagePath || props.car?.ImagePath;
+  if (!path) return '/Resources/заглушка.png';
+  if (path.startsWith('http') || path.startsWith('/')) return path;
+  return `/Resources/${path}`;
 });
 
 function onImgError(e) {
@@ -196,13 +199,13 @@ async function onDateChange() {
 
 async function submitBooking() {
   if (!bookingDate.value || !selectedTime.value) {
-    alert('Заполните поля');
+    showToast('Заполните дату и время', 'warning');
     return;
   }
 
   const selectedSlot = timeSlots.value.find(t => t.timeValue === selectedTime.value);
   if (selectedSlot && !selectedSlot.isAvailable) {
-    alert('Это время недоступно для бронирования');
+    showToast('Это время недоступно для бронирования', 'warning');
     return;
   }
 
@@ -212,24 +215,24 @@ async function submitBooking() {
   now.setHours(0, 0, 0, 0);
 
   if (selDate < now) {
-    alert('Нельзя выбрать прошедшую дату');
+    showToast('Нельзя выбрать прошедшую дату', 'warning');
     return;
   }
 
   const monthLater = new Date(now);
   monthLater.setMonth(monthLater.getMonth() + 1);
   if (selDate > monthLater) {
-    alert('Бронирование доступно только в пределах месяца');
+    showToast('Бронирование доступно только в пределах месяца', 'warning');
     return;
   }
 
   if (!agreed.value) {
-    alert('Для оформления бронирования необходимо согласиться с условиями');
+    showToast('Для оформления бронирования необходимо согласиться с условиями', 'warning');
     return;
   }
 
   if (!paymentMethod.value) {
-    alert('Выберите способ оплаты');
+    showToast('Выберите способ оплаты', 'warning');
     return;
   }
 
@@ -245,12 +248,12 @@ async function submitBooking() {
   submitting.value = true;
   try {
     const result = await apiClient.createBooking(bookingDto);
-    alert(typeof result === 'string' ? result : 'Бронирование успешно создано!');
+    showToast(typeof result === 'string' ? result : 'Бронирование успешно создано!', 'success');
     emit('success');
     emit('close');
   } catch (err) {
     const errorText = err.response?.data || err.message || 'Ошибка оформления бронирования';
-    alert(typeof errorText === 'string' ? errorText : JSON.stringify(errorText));
+    showToast(typeof errorText === 'string' ? errorText : JSON.stringify(errorText), 'error');
   } finally {
     submitting.value = false;
   }
@@ -317,14 +320,16 @@ async function submitBooking() {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  overflow: hidden;
+  height: 380px;
   min-height: 380px;
+  padding: 0;
 }
 
 .car-booking-img {
-  max-width: 100%;
-  max-height: 380px;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .form-column {

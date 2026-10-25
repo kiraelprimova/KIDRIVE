@@ -5,7 +5,9 @@ import RegisterView from './views/RegisterView.vue';
 import ClientLayout from './views/ClientLayout.vue';
 import CatalogView from './views/CatalogView.vue';
 import MyBookingsView from './views/MyBookingsView.vue';
+import FavoritesView from './views/FavoritesView.vue';
 import ProfileView from './views/ProfileView.vue';
+import ChangePasswordView from './views/ChangePasswordView.vue';
 import { authState } from './auth';
 
 const routes = [
@@ -38,6 +40,11 @@ const routes = [
         component: CatalogView,
       },
       {
+        path: 'favorites',
+        name: 'favorites',
+        component: FavoritesView,
+      },
+      {
         path: 'bookings',
         name: 'bookings',
         component: MyBookingsView,
@@ -46,6 +53,11 @@ const routes = [
         path: 'profile',
         name: 'profile',
         component: ProfileView,
+      },
+      {
+        path: 'change-password',
+        name: 'change-password',
+        component: ChangePasswordView,
       },
     ],
   },
