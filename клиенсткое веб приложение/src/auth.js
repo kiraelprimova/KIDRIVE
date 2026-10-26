@@ -13,14 +13,20 @@ try {
 export const authState = reactive({
   user: initialUser,
   get userId() {
-    return this.user ? this.user.idUser : 0;
+    if (!this.user) return 0;
+    return this.user.idUser || this.user.IdUser || 0;
   },
   get isGuest() {
-    return !this.user || this.user.idUser === 0;
+    if (!this.user) return true;
+    const id = this.user.idUser || this.user.IdUser;
+    return !id || id === 0;
   }
 });
 
 export function setUser(user) {
+  if (user && !user.idUser && user.IdUser) {
+    user.idUser = user.IdUser;
+  }
   authState.user = user;
   if (user) {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));

@@ -29,19 +29,19 @@ export const apiClient = {
 
   // Получить данные пользователя по ID
   async getUser(id) {
-    const response = await api.get(`/User/GetClient?id=${id}`);
+    const response = await api.get(`/User/GetClient/${id}`);
     return response.data;
   },
 
   // Обновить профиль
   async updateUser(id, data) {
-    const response = await api.put(`/User/UpdateClient?id=${id}`, data);
+    const response = await api.put(`/User/UpdateClient/${id}`, data);
     return response.data;
   },
 
   // Удалить аккаунт (пометить как удаленный)
   async deleteUser(id) {
-    const response = await api.put(`/User/DeleteUser?id=${id}`);
+    const response = await api.put(`/User/DeleteUser/${id}`);
     return response.data;
   },
 

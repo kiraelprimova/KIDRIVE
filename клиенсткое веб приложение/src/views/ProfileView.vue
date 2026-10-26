@@ -139,8 +139,9 @@ const phone = ref('');
 const email = ref('');
 const birthDate = ref('');
 
-// Храним пароль пользователя, чтобы не затереть его при обычном обновлении профиля
+// Храним пароль и роль пользователя, чтобы не затереть их при обычном обновлении профиля
 let existingPassword = '';
+let userRoleId = 1;
 
 onMounted(async () => {
   await loadUserData();
@@ -152,15 +153,17 @@ async function loadUserData() {
 
   try {
     const user = await apiClient.getUser(userId);
-    firstName.value = user.firstName || '';
-    lastName.value = user.lastName || '';
-    patronymic.value = user.patronymic || '';
-    phone.value = user.phone || '';
-    email.value = user.email || '';
-    existingPassword = user.password || '';
+    firstName.value = user.firstName || user.FirstName || '';
+    lastName.value = user.lastName || user.LastName || '';
+    patronymic.value = user.patronymic || user.Patronymic || '';
+    phone.value = user.phone || user.Phone || '';
+    email.value = user.email || user.Email || '';
+    existingPassword = user.password || user.Password || '';
+    userRoleId = user.idRole || user.IdRole || 1;
 
-    if (user.birthDate) {
-      birthDate.value = String(user.birthDate).split('T')[0];
+    const bDate = user.birthDate || user.BirthDate;
+    if (bDate) {
+      birthDate.value = String(bDate).split('T')[0];
     }
   } catch (err) {
     console.error('Ошибка загрузки профиля:', err);
@@ -294,6 +297,8 @@ async function saveProfile() {
   }
 
   const payload = {
+    idUser: authState.userId,
+    idRole: userRoleId || authState.user?.idRole || authState.user?.IdRole || 1,
     firstName: firstName.value.trim(),
     lastName: lastName.value.trim(),
     patronymic: (patronymic.value || '').trim(),
