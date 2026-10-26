@@ -1,0 +1,127 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TestDriveAvalonia.Windows.BookingWindow"
+        Title="Бронирование"
+        Width="1030"
+        Height="780"
+        WindowStartupLocation="CenterScreen"
+        Background="#FAFAFA"
+        CanResize="False"
+        Icon="/Resources/logo.ico">
+
+    <Grid Margin="25">
+        <Border Background="White"
+                CornerRadius="20"
+                BoxShadow="0 2 12 0 #14000000">
+
+            <Grid Margin="25" RowDefinitions="Auto,*">
+                <Grid ColumnDefinitions="Auto,*">
+                    <Button Width="110"
+                            Height="40"
+                            Background="#1E3A8A"
+                            BorderThickness="0"
+                            CornerRadius="10"
+                            Foreground="White"
+                            Cursor="Hand"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="BackButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="←" Margin="0,0,6,0" FontSize="14"/>
+                            <TextBlock Text="Назад"/>
+                        </StackPanel>
+                    </Button>
+
+                    <TextBlock Grid.Column="1"
+                               Text="Бронирование тест-драйва"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="#111827"
+                               VerticalAlignment="Center"
+                               Margin="20,0,0,0"/>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="0,20,0,0" ColumnDefinitions="1.1*,30,1*">
+                    <Border CornerRadius="16"
+                            Background="#F3F4F6"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="1"
+                            ClipToBounds="True">
+                        <Image x:Name="CarImage"
+                               Stretch="Uniform"
+                               Margin="20"/>
+                    </Border>
+
+                    <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock x:Name="CarText"
+                                       FontSize="26"
+                                       FontWeight="Bold"
+                                       Foreground="#111827"
+                                       Margin="0,0,0,12"/>
+
+                            <TextBlock x:Name="PriceText"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Foreground="#1E3A8A"
+                                       Margin="0,0,0,15"/>
+
+                            <TextBlock Text="Дата"
+                                       FontSize="13"
+                                       Foreground="#6B7280"/>
+
+                            <DatePicker x:Name="BookingDate"
+                                        Height="40"
+                                        Margin="0,5,0,15"
+                                        HorizontalAlignment="Stretch"/>
+
+                            <TextBlock Text="Время"
+                                       FontSize="13"
+                                       Foreground="#6B7280"/>
+
+                            <ComboBox x:Name="TimeBox"
+                                      Height="36"
+                                      Margin="0,5,0,15"
+                                      HorizontalAlignment="Stretch"/>
+
+                            <TextBlock Text="Способ оплаты"
+                                       FontSize="13"
+                                       Foreground="#6B7280"
+                                       Margin="0,5,0,5"/>
+
+                            <StackPanel Margin="0,5,0,10">
+                                <RadioButton x:Name="CashCheck"
+                                             Content="Наличный расчет"
+                                             GroupName="PaymentMethod"
+                                             Margin="0,4,0,0"/>
+
+                                <RadioButton x:Name="CardCheck"
+                                             Content="Оплата картой"
+                                             GroupName="PaymentMethod"
+                                             Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <CheckBox x:Name="AgreementCheck"
+                                      FontSize="12"
+                                      Foreground="#374151"
+                                      Margin="0,10,0,20"
+                                      Content="Я соглашаюсь с условиями обработки персональных данных"/>
+
+                            <Button Content="Забронировать"
+                                    Height="48"
+                                    Background="#1E3A8A"
+                                    Foreground="White"
+                                    FontSize="15"
+                                    CornerRadius="12"
+                                    Cursor="Hand"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Click="BookingButton_Click"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

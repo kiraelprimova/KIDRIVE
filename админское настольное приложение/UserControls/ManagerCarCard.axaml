@@ -1,0 +1,90 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="TestDriveAvalonia.UserControls.ManagerCarCard"
+             Height="150"
+             HorizontalAlignment="Stretch">
+
+    <Border Background="White"
+            CornerRadius="12"
+            Margin="0,0,0,15"
+            Padding="15"
+            BoxShadow="0 2 10 0 #1E000000">
+
+        <Grid HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="110"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Width="120"
+                    Height="120"
+                    CornerRadius="12"
+                    Background="#F3F4F6"
+                    ClipToBounds="True"
+                    VerticalAlignment="Center">
+
+                <Image x:Name="CarImage"
+                       Stretch="Uniform"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
+            </Border>
+
+            <StackPanel Grid.Column="1"
+                        Margin="15,0"
+                        VerticalAlignment="Center">
+
+                <TextBlock x:Name="NameText"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="#111827"/>
+
+                <TextBlock x:Name="YearText"
+                           Foreground="#6B7280"
+                           Margin="0,5,0,0"/>
+
+                <TextBlock x:Name="PriceText"
+                           Foreground="#1E3A8A"
+                           FontWeight="Bold"
+                           Margin="0,5,0,0"/>
+
+                <TextBlock x:Name="DescriptionText"
+                           Margin="0,8,0,0"
+                           Foreground="#6B7280"
+                           TextTrimming="CharacterEllipsis"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right">
+
+                <Button Width="42"
+                        Height="42"
+                        Margin="0,0,8,0"
+                        Background="#F3F4F6"
+                        BorderThickness="0"
+                        CornerRadius="10"
+                        Cursor="Hand"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="EditButton_Click">
+                    <TextBlock Text="✏" FontSize="16"/>
+                </Button>
+
+                <Button Width="42"
+                        Height="42"
+                        Background="#DC2626"
+                        Foreground="White"
+                        BorderThickness="0"
+                        CornerRadius="10"
+                        Cursor="Hand"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="DeleteButton_Click">
+                    <TextBlock Text="🗑" FontSize="14"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

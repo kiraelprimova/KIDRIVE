@@ -1,0 +1,194 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TestDriveAvalonia.Windows.RegistrationWindow"
+        Title="Регистрация"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen"
+        Background="#F8FAFC"
+        Icon="/Resources/logo.ico">
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Border Background="White"
+                    CornerRadius="16"
+                    BoxShadow="0 4 24 0 #12000000"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="1"
+                    Width="460"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="0,30"
+                    Padding="36,32">
+
+                <StackPanel>
+                    <TextBlock Text="Регистрация"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#111827"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,6"/>
+
+                    <TextBlock Text="Создайте аккаунт для доступа к тест-драйвам"
+                               FontSize="13.5"
+                               Foreground="#6B7280"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,24"/>
+
+                    <TextBlock Text="Имя *"
+                               FontSize="13.5"
+                               FontWeight="Medium"
+                               Foreground="#374151"
+                               Margin="0,0,0,5"/>
+
+                    <TextBox x:Name="FirstName"
+                             Height="40"
+                             FontSize="14"
+                             Padding="12,0"
+                             VerticalContentAlignment="Center"
+                             Watermark="Ваше имя"
+                             Margin="0,0,0,14"
+                             MaxLength="10"/>
+
+                    <TextBlock Text="Фамилия *"
+                               FontSize="13.5"
+                               FontWeight="Medium"
+                               Foreground="#374151"
+                               Margin="0,0,0,5"/>
+
+                    <TextBox x:Name="LastName"
+                             Height="40"
+                             FontSize="14"
+                             Padding="12,0"
+                             VerticalContentAlignment="Center"
+                             Watermark="Ваша фамилия"
+                             Margin="0,0,0,14"
+                             MaxLength="15"/>
+
+                    <TextBlock Text="Отчество"
+                               FontSize="13.5"
+                               FontWeight="Medium"
+                               Foreground="#374151"
+                               Margin="0,0,0,5"/>
+
+                    <TextBox x:Name="Patronymic"
+                             Height="40"
+                             FontSize="14"
+                             Padding="12,0"
+                             VerticalContentAlignment="Center"
+                             Watermark="Ваше отчество (если есть)"
+                             Margin="0,0,0,14"
+                             MaxLength="15"/>
+
+                    <TextBlock Text="Номер телефона *"
+                               FontSize="13.5"
+                               FontWeight="Medium"
+                               Foreground="#374151"
+                               Margin="0,0,0,5"/>
+
+                    <TextBox x:Name="PhoneNumber"
+                             Height="40"
+                             FontSize="14"
+                             Padding="12,0"
+                             VerticalContentAlignment="Center"
+                             Watermark="+7 (___) ___-__-__"
+                             Margin="0,0,0,14"
+                             MaxLength="18"/>
+
+                    <TextBlock Text="Пароль *"
+                               FontSize="13.5"
+                               FontWeight="Medium"
+                               Foreground="#374151"
+                               Margin="0,0,0,5"/>
+
+                    <Grid Margin="0,0,0,4">
+                        <TextBox x:Name="Password"
+                                 Height="40"
+                                 FontSize="14"
+                                 Padding="12,0,45,0"
+                                 VerticalContentAlignment="Center"
+                                 Watermark="Придумайте пароль"
+                                 PasswordChar="•"
+                                 MaxLength="20"/>
+
+                        <CheckBox x:Name="ShowPassword"
+                                  Content="👁"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,10,0"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  Cursor="Hand"/>
+                    </Grid>
+
+                    <TextBlock Text="Минимум 8 символов"
+                               FontSize="11.5"
+                               Foreground="#9CA3AF"
+                               Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Подтверждение пароля *"
+                               FontSize="13.5"
+                               FontWeight="Medium"
+                               Foreground="#374151"
+                               Margin="0,0,0,5"/>
+
+                    <Grid Margin="0,0,0,14">
+                        <TextBox x:Name="ConfirmPassword"
+                                 Height="40"
+                                 FontSize="14"
+                                 Padding="12,0,45,0"
+                                 VerticalContentAlignment="Center"
+                                 Watermark="Повторите пароль"
+                                 PasswordChar="•"
+                                 MaxLength="20"/>
+
+                        <CheckBox x:Name="ShowConfirmPassword"
+                                  Content="👁"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,10,0"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  Cursor="Hand"/>
+                    </Grid>
+
+                    <TextBlock Text="Дата рождения *"
+                               FontSize="13.5"
+                               FontWeight="Medium"
+                               Foreground="#374151"
+                               Margin="0,0,0,5"/>
+
+                    <DatePicker x:Name="BirthDatePicker"
+                                Height="40"
+                                FontSize="13"
+                                Margin="0,0,0,24"/>
+
+                    <Button x:Name="RegisterButton"
+                            Content="Зарегистрироваться"
+                            Height="44"
+                            Background="#1E3A8A"
+                            Foreground="White"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            CornerRadius="8"
+                            Cursor="Hand"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Margin="0,0,0,14"
+                            Click="RegisterButton_Click"/>
+
+                    <Button x:Name="AuthBT"
+                            Content="Уже есть аккаунт? Войти"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="#1E3A8A"
+                            FontWeight="Medium"
+                            FontSize="13"
+                            Cursor="Hand"
+                            HorizontalAlignment="Center"
+                            Click="AuthBT_Click"/>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</Window>

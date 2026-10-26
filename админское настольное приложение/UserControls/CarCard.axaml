@@ -1,0 +1,79 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="TestDriveAvalonia.UserControls.CarCard"
+             Height="475"
+             Width="300">
+
+    <Border Background="White"
+            CornerRadius="15"
+            Margin="10"
+            BoxShadow="0 3 15 0 #26000000">
+
+        <StackPanel>
+            <Border Height="230"
+                    CornerRadius="15,15,0,0"
+                    Background="#F3F4F6"
+                    ClipToBounds="True">
+
+                <Image x:Name="CarImage"
+                       Stretch="Uniform"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
+            </Border>
+
+            <StackPanel Margin="15">
+                <TextBlock x:Name="BrandText"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="#1F2937"/>
+
+                <TextBlock x:Name="YearText"
+                           FontSize="14"
+                           Foreground="#6B7280"
+                           Margin="0,5,0,0"/>
+
+                <TextBlock x:Name="PriceText"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="#1E3A8A"
+                           Margin="0,8,0,0"/>
+
+                <TextBlock x:Name="DescriptionText"
+                           FontSize="13"
+                           Foreground="#4B5563"
+                           TextWrapping="Wrap"
+                           MaxHeight="40"
+                           Margin="0,8,0,12"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="MoreButton"
+                            Content="Подробнее"
+                            Height="40"
+                            Width="115"
+                            Background="#1E3A8A"
+                            Foreground="White"
+                            FontSize="14"
+                            CornerRadius="8"
+                            Cursor="Hand"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="MoreButton_Click"/>
+
+                    <Button x:Name="BronButton"
+                            Content="Бронь"
+                            Height="40"
+                            Width="115"
+                            Margin="12,0,0,0"
+                            Background="#1E3A8A"
+                            Foreground="White"
+                            FontSize="14"
+                            CornerRadius="8"
+                            Cursor="Hand"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="BronButton_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

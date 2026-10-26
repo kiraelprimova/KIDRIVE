@@ -1,0 +1,219 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TestDriveAvalonia.Windows.ManagerCarsWindow"
+        Title="Автомобили"
+        WindowState="Maximized"
+        Background="#F3F4F6"
+        Icon="/Resources/logo.ico">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Меню менеджера слева -->
+        <Border Background="White"
+                BorderBrush="#E5E7EB"
+                BorderThickness="0,0,1,0">
+
+            <Grid RowDefinitions="Auto,*">
+                <StackPanel Margin="15,20,15,0">
+                    <TextBlock Text="Автосалон"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="#1E3A8A"/>
+
+                    <TextBlock Text="Панель менеджера"
+                               FontSize="12"
+                               Foreground="#9CA3AF"
+                               Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Margin="10,25,10,0">
+                    <Button Height="40"
+                            Margin="0,0,0,10"
+                            Background="#1E3A8A"
+                            Foreground="White"
+                            BorderThickness="0"
+                            CornerRadius="10"
+                            Cursor="Hand"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🚘" Margin="10,0,10,0"/>
+                            <TextBlock Text="Автомобили" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Height="40"
+                            Margin="0,0,0,10"
+                            Background="White"
+                            BorderThickness="1"
+                            BorderBrush="#E5E7EB"
+                            CornerRadius="10"
+                            Cursor="Hand"
+                            HorizontalAlignment="Stretch"
+                            Click="BookingsButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="📅" Margin="10,0,10,0"/>
+                            <TextBlock Text="Бронирования" Foreground="#111827" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Height="40"
+                            Margin="0,0,0,10"
+                            Background="White"
+                            BorderThickness="1"
+                            BorderBrush="#E5E7EB"
+                            CornerRadius="10"
+                            Cursor="Hand"
+                            HorizontalAlignment="Stretch"
+                            Click="AnalyticsButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="📊" Margin="10,0,10,0"/>
+                            <TextBlock Text="Аналитика" Foreground="#111827" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Height="40"
+                            Background="White"
+                            BorderThickness="1"
+                            BorderBrush="#E5E7EB"
+                            CornerRadius="10"
+                            Cursor="Hand"
+                            HorizontalAlignment="Stretch"
+                            Click="ProfileButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="👤" Margin="10,0,10,0"/>
+                            <TextBlock Text="Профиль" Foreground="#111827" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Контент -->
+        <Grid Grid.Column="1" RowDefinitions="60,*">
+            <Border Background="White"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="0,0,0,1">
+                <Grid Margin="20,0" ColumnDefinitions="*,Auto">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="UserText"
+                                   FontWeight="Bold"
+                                   FontSize="15"
+                                   Foreground="#111827"/>
+                        <TextBlock x:Name="EmailText"
+                                   Foreground="#9CA3AF"
+                                   FontSize="12"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <Button Grid.Column="1"
+                            Height="35"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="ExitButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="↪" Foreground="#6B7280" Margin="0,0,5,0"/>
+                            <TextBlock Text="Выйти" Foreground="#6B7280"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="25">
+                    <Grid Margin="0,0,0,20" ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Управление автомобилями"
+                                   FontSize="28"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+
+                        <Button Grid.Column="1"
+                                Width="220"
+                                Height="45"
+                                Background="#1E3A8A"
+                                Foreground="White"
+                                BorderThickness="0"
+                                CornerRadius="10"
+                                Cursor="Hand"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Click="AddButton_Click">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="+" FontSize="18" Margin="0,0,8,0"/>
+                                <TextBlock Text="Добавить автомобиль" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <!-- Поиск и фильтры -->
+                    <Border Background="White"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="18"
+                            Margin="0,0,0,20">
+                        <StackPanel>
+                            <Border Background="#F9FAFB"
+                                    BorderBrush="#1E3A8A"
+                                    BorderThickness="1.5"
+                                    CornerRadius="10"
+                                    Height="44">
+                                <Grid ColumnDefinitions="45,*">
+                                    <TextBlock Text="🔍"
+                                               FontSize="14"
+                                               Foreground="#1E3A8A"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBox x:Name="SearchBox"
+                                             Grid.Column="1"
+                                             BorderThickness="0"
+                                             Background="Transparent"
+                                             FontSize="14"
+                                             VerticalContentAlignment="Center"
+                                             Watermark="Поиск..."/>
+                                </Grid>
+                            </Border>
+
+                            <Grid Margin="0,15,0,0" ColumnDefinitions="*,20,*,20,*">
+                                <StackPanel>
+                                    <TextBlock Text="Марка" FontSize="12" Margin="2,0,0,6"/>
+                                    <ComboBox x:Name="BrandBox" HorizontalAlignment="Stretch"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Год выпуска" FontSize="12" Margin="2,0,0,6"/>
+                                    <ComboBox x:Name="YearBox" HorizontalAlignment="Stretch"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Text="Сортировка" FontSize="12" Margin="2,0,0,6"/>
+                                    <ComboBox x:Name="SortBox" HorizontalAlignment="Stretch">
+                                        <ComboBoxItem Content="Все"/>
+                                        <ComboBoxItem Content="А-Я"/>
+                                        <ComboBoxItem Content="Я-А"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Список карточек машин -->
+                    <StackPanel x:Name="CarsPanel"/>
+
+                    <TextBlock x:Name="EmptyText"
+                               Text="Автомобили не найдены"
+                               FontSize="22"
+                               FontWeight="SemiBold"
+                               Foreground="#9CA3AF"
+                               HorizontalAlignment="Center"
+                               Margin="0,40,0,0"
+                               IsVisible="False"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

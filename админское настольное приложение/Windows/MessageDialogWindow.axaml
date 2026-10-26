@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TestDriveAvalonia.Windows.MessageDialogWindow"
+        Title="Сообщение"
+        Width="400"
+        Height="190"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="White"
+        Icon="/Resources/logo.ico">
+
+    <Grid Margin="24" RowDefinitions="*,Auto">
+        <TextBlock x:Name="MessageText"
+                   Text="Текст сообщения"
+                   TextWrapping="Wrap"
+                   FontSize="14"
+                   Foreground="#1F2937"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"/>
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Spacing="12">
+            <Button x:Name="CancelButton"
+                    Content="Отмена"
+                    Width="110"
+                    Height="38"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="White"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="1"
+                    Foreground="#374151"
+                    CornerRadius="8"
+                    IsVisible="False"
+                    Cursor="Hand"
+                    Click="CancelButton_Click"/>
+
+            <Button x:Name="OkButton"
+                    Content="ОК"
+                    Width="110"
+                    Height="38"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="#1E3A8A"
+                    Foreground="White"
+                    CornerRadius="8"
+                    Cursor="Hand"
+                    Click="OkButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

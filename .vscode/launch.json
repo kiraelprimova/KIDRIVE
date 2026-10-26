@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Запуск TestDrive Avalonia",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-avalonia",
+            "program": "${workspaceFolder}/админское настольное приложение/bin/Debug/net8.0/TestDriveAvalonia.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/админское настольное приложение",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "Запуск TestDrive API",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-api",
+            "program": "${workspaceFolder}/TestDrive_API/bin/Debug/net8.0/TestDrive_API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/TestDrive_API",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+    ]
+}

@@ -1,0 +1,136 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TestDriveAvalonia.Windows.MainWindow"
+        Title="Авторизация"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen"
+        Background="#F8FAFC"
+        Icon="/Resources/logo.ico">
+
+    <Grid>
+        <!-- Карточка авторизации по центру экрана -->
+        <Border Background="White"
+                CornerRadius="16"
+                BoxShadow="0 4 24 0 #12000000"
+                BorderBrush="#E5E7EB"
+                BorderThickness="1"
+                Width="420"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Padding="36,32">
+
+            <StackPanel>
+                <TextBlock Text="Авторизация"
+                           FontSize="28"
+                           FontWeight="Bold"
+                           Foreground="#111827"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,6"/>
+
+                <TextBlock Text="Войдите в свой аккаунт для продолжения"
+                           FontSize="13.5"
+                           Foreground="#6B7280"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,26"/>
+
+                <TextBlock Text="Номер телефона"
+                           FontSize="13.5"
+                           FontWeight="Medium"
+                           Foreground="#374151"
+                           Margin="0,0,0,6"/>
+
+                <TextBox x:Name="PhoneNumber"
+                         Height="42"
+                         FontSize="14"
+                         Padding="12,0"
+                         VerticalContentAlignment="Center"
+                         Margin="0,0,0,18"
+                         Watermark="+7 (___) ___-__-__"
+                         MaxLength="18"/>
+
+                <TextBlock Text="Пароль"
+                           FontSize="13.5"
+                           FontWeight="Medium"
+                           Foreground="#374151"
+                           Margin="0,0,0,6"/>
+
+                <Grid Margin="0,0,0,14">
+                    <TextBox x:Name="Password"
+                             Height="42"
+                             FontSize="14"
+                             Padding="12,0,45,0"
+                             VerticalContentAlignment="Center"
+                             Watermark="Введите пароль"
+                             PasswordChar="•"
+                             MaxLength="20"/>
+
+                    <CheckBox x:Name="ShowPassword"
+                              Content="👁"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              Margin="0,0,10,0"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              Cursor="Hand"/>
+                </Grid>
+
+                <Button x:Name="ForgotPasswordButton"
+                        Content="Забыли пароль?"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="#1E3A8A"
+                        FontWeight="Medium"
+                        FontSize="13"
+                        Cursor="Hand"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,0,20"
+                        Click="ForgotPasswordButton_Click"/>
+
+                <Grid ColumnDefinitions="*,*" Margin="0,0,0,16">
+                    <Button x:Name="LoginButton"
+                            Grid.Column="0"
+                            Content="Войти"
+                            Height="44"
+                            Background="#1E3A8A"
+                            Foreground="White"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            CornerRadius="8"
+                            Cursor="Hand"
+                            Margin="0,0,6,0"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="LoginButton_Click"/>
+
+                    <Button x:Name="GuestButton"
+                            Grid.Column="1"
+                            Content="Гость"
+                            Height="44"
+                            Background="#1E3A8A"
+                            Foreground="White"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            CornerRadius="8"
+                            Cursor="Hand"
+                            Margin="6,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="GuestButton_Click"/>
+                </Grid>
+
+                <Button x:Name="RegisterBT"
+                        Content="Нет аккаунта? Регистрация"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="#1E3A8A"
+                        FontWeight="Medium"
+                        FontSize="13"
+                        Cursor="Hand"
+                        HorizontalAlignment="Center"
+                        Click="RegisterBT_Click"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

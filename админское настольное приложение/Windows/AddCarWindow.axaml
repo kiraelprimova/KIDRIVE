@@ -1,0 +1,107 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TestDriveAvalonia.Windows.AddCarWindow"
+        Title="Добавить автомобиль"
+        Width="500"
+        Height="800"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="#F3F4F6"
+        Icon="/Resources/logo.ico">
+
+    <Grid Margin="20">
+        <Border Background="White"
+                CornerRadius="15"
+                Padding="25"
+                BoxShadow="0 2 12 0 #10000000">
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Добавить автомобиль"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               Margin="0,0,0,20"/>
+
+                    <TextBlock Text="Категория" FontSize="13" Foreground="#6B7280"/>
+                    <ComboBox x:Name="CategoryBox"
+                              Height="38"
+                              Margin="0,5,0,15"
+                              HorizontalAlignment="Stretch"/>
+
+                    <TextBlock Text="Модель" FontSize="13" Foreground="#6B7280"/>
+                    <TextBox x:Name="ModelBox"
+                             Height="38"
+                             Margin="0,5,0,15"/>
+
+                    <TextBlock Text="Год выпуска" FontSize="13" Foreground="#6B7280"/>
+                    <TextBox x:Name="YearBox"
+                             Height="38"
+                             Margin="0,5,0,15"/>
+
+                    <TextBlock Text="Цена" FontSize="13" Foreground="#6B7280"/>
+                    <TextBox x:Name="PriceBox"
+                             Height="38"
+                             Margin="0,5,0,15"/>
+
+                    <TextBlock Text="Описание" FontSize="13" Foreground="#6B7280"/>
+                    <TextBox x:Name="DescriptionBox"
+                             Height="110"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             Margin="0,5,0,15"/>
+
+                    <TextBlock Text="Картинка" FontSize="13" Foreground="#6B7280"/>
+                    <Grid Margin="0,5,0,25" ColumnDefinitions="*,110">
+                        <TextBox x:Name="ImageBox"
+                                 Height="38"
+                                 IsReadOnly="True"
+                                 VerticalContentAlignment="Center"/>
+
+                        <Button Grid.Column="1"
+                                Margin="10,0,0,0"
+                                Content="Выбрать"
+                                Background="#1E3A8A"
+                                Foreground="White"
+                                BorderThickness="0"
+                                CornerRadius="8"
+                                Cursor="Hand"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Click="SelectImageButton_Click"/>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,15,*">
+                        <Button Grid.Column="0"
+                                Height="44"
+                                Background="#1E3A8A"
+                                Foreground="White"
+                                BorderThickness="0"
+                                CornerRadius="8"
+                                Cursor="Hand"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Click="SaveButton_Click">
+                            <TextBlock Text="Сохранить" FontWeight="SemiBold"/>
+                        </Button>
+
+                        <Button Grid.Column="2"
+                                Height="44"
+                                Background="#DC2626"
+                                Foreground="White"
+                                BorderThickness="0"
+                                CornerRadius="8"
+                                Cursor="Hand"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Click="CancelButton_Click">
+                            <TextBlock Text="Отмена" FontWeight="SemiBold"/>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>

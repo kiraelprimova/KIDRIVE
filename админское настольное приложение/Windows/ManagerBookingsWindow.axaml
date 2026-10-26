@@ -1,0 +1,150 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TestDriveAvalonia.Windows.ManagerBookingsWindow"
+        Title="Бронирования"
+        WindowState="Maximized"
+        Background="#F3F4F6"
+        Icon="/Resources/logo.ico">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Меню менеджера слева -->
+        <Border Background="White"
+                BorderBrush="#E5E7EB"
+                BorderThickness="0,0,1,0">
+
+            <Grid RowDefinitions="Auto,*">
+                <StackPanel Margin="15,20,15,0">
+                    <TextBlock Text="Автосалон"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="#1E3A8A"/>
+
+                    <TextBlock Text="Панель менеджера"
+                               FontSize="12"
+                               Foreground="#9CA3AF"
+                               Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Margin="10,25,10,0">
+                    <Button Height="40"
+                            Margin="0,0,0,10"
+                            Background="White"
+                            BorderThickness="1"
+                            BorderBrush="#E5E7EB"
+                            CornerRadius="10"
+                            Cursor="Hand"
+                            HorizontalAlignment="Stretch"
+                            Click="CarsButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🚘" Margin="10,0,10,0"/>
+                            <TextBlock Text="Автомобили" Foreground="#111827" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Height="40"
+                            Margin="0,0,0,10"
+                            Background="#1E3A8A"
+                            Foreground="White"
+                            BorderThickness="0"
+                            CornerRadius="10"
+                            Cursor="Hand"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="📅" Margin="10,0,10,0"/>
+                            <TextBlock Text="Бронирования" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Height="40"
+                            Margin="0,0,0,10"
+                            Background="White"
+                            BorderThickness="1"
+                            BorderBrush="#E5E7EB"
+                            CornerRadius="10"
+                            Cursor="Hand"
+                            HorizontalAlignment="Stretch"
+                            Click="AnalyticsButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="📊" Margin="10,0,10,0"/>
+                            <TextBlock Text="Аналитика" Foreground="#111827" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Height="40"
+                            Background="White"
+                            BorderThickness="1"
+                            BorderBrush="#E5E7EB"
+                            CornerRadius="10"
+                            Cursor="Hand"
+                            HorizontalAlignment="Stretch"
+                            Click="ProfileButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="👤" Margin="10,0,10,0"/>
+                            <TextBlock Text="Профиль" Foreground="#111827" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Контент -->
+        <Grid Grid.Column="1" RowDefinitions="60,*">
+            <Border Background="White"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="0,0,0,1">
+                <Grid Margin="20,0" ColumnDefinitions="*,Auto">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="UserText"
+                                   FontWeight="Bold"
+                                   FontSize="15"
+                                   Foreground="#111827"/>
+                        <TextBlock x:Name="EmailText"
+                                   Foreground="#9CA3AF"
+                                   FontSize="12"
+                                   Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <Button Grid.Column="1"
+                            Height="35"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="ExitButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="↪" Foreground="#6B7280" Margin="0,0,6,0"/>
+                            <TextBlock Text="Выйти" Foreground="#6B7280"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="25">
+                    <TextBlock Text="Бронирования клиентов"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="#111827"
+                               Margin="0,0,0,20"/>
+
+                    <ComboBox x:Name="StatusFilterBox"
+                              Width="220"
+                              Height="38"
+                              Margin="0,0,0,20">
+                        <ComboBoxItem Content="Все"/>
+                        <ComboBoxItem Content="В рассмотрении"/>
+                        <ComboBoxItem Content="Подтверждено"/>
+                        <ComboBoxItem Content="Завершено"/>
+                        <ComboBoxItem Content="Отменено"/>
+                    </ComboBox>
+
+                    <StackPanel x:Name="BookingsPanel" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

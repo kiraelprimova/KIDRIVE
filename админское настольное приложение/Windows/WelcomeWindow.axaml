@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TestDriveAvalonia.Windows.WelcomeWindow"
+        Title="Добро пожаловать"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        CanResize="False"
+        Icon="/Resources/logo.ico">
+
+    <Panel>
+        <Image Source="avares://TestDriveAvalonia/Resources/welcome.png"
+               Stretch="UniformToFill"/>
+
+        <Grid>
+            <!-- КНОПКИ -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Margin="75,0,0,95">
+
+                <Button x:Name="LoginButton"
+                        Content="Войти"
+                        Width="180"
+                        Height="52"
+                        Background="#1E3A8A"
+                        Foreground="White"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        CornerRadius="12"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Margin="0,0,18,0"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="LoginButton_Click"/>
+
+                <Button x:Name="RegisterButton"
+                        Content="Регистрация"
+                        Width="220"
+                        Height="52"
+                        Background="White"
+                        Foreground="#1E3A8A"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        BorderBrush="#1E3A8A"
+                        BorderThickness="2"
+                        CornerRadius="12"
+                        Cursor="Hand"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="RegisterButton_Click"/>
+
+            </StackPanel>
+        </Grid>
+    </Panel>
+</Window>
