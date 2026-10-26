@@ -37,6 +37,19 @@
 
         <button
           class="nav-item"
+          :class="{ active: currentTab === 'ai-chat' }"
+          @click="navigate('ai-chat')"
+        >
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </span>
+          <span class="nav-text">Подбор авто</span>
+        </button>
+
+        <button
+          class="nav-item"
           :class="{ active: currentTab === 'bookings' }"
           @click="navigate('bookings')"
         >
@@ -114,6 +127,7 @@ const currentTab = computed(() => {
   if (route.path.includes('/favorites')) return 'favorites';
   if (route.path.includes('/bookings')) return 'bookings';
   if (route.path.includes('/profile') || route.path.includes('/change-password')) return 'profile';
+  if (route.path.includes('/ai-chat')) return 'ai-chat';
   return 'catalog';
 });
 
@@ -149,6 +163,10 @@ async function navigate(tab) {
   } else if (tab === 'favorites') {
     if (await checkGuest('Чтобы просмотреть избранное, вам нужно авторизоваться.')) {
       router.push('/app/favorites');
+    }
+  } else if (tab === 'ai-chat') {
+    if (await checkGuest('Чтобы использовать подбор авто, вам нужно авторизоваться.')) {
+      router.push('/app/ai-chat');
     }
   } else if (tab === 'bookings') {
     if (await checkGuest('Чтобы просмотреть бронирования, вам нужно авторизоваться.')) {

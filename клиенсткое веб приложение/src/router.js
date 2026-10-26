@@ -6,6 +6,7 @@ import ClientLayout from './views/ClientLayout.vue';
 import CatalogView from './views/CatalogView.vue';
 import MyBookingsView from './views/MyBookingsView.vue';
 import FavoritesView from './views/FavoritesView.vue';
+import AiChatView from './views/AiChatView.vue';
 import ProfileView from './views/ProfileView.vue';
 import ChangePasswordView from './views/ChangePasswordView.vue';
 import { authState } from './auth';
@@ -43,6 +44,11 @@ const routes = [
         path: 'favorites',
         name: 'favorites',
         component: FavoritesView,
+      },
+      {
+        path: 'ai-chat',
+        name: 'ai-chat',
+        component: AiChatView,
       },
       {
         path: 'bookings',

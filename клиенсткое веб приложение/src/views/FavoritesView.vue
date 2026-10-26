@@ -15,11 +15,11 @@
     <div v-else-if="favorites.length > 0" class="cars-grid">
       <CarCard
         v-for="fav in favorites"
-        :key="fav.idFavorite || fav.car.idCar"
-        :car="fav.car"
-        :category-name="fav.car.categoryName || getCategoryName(fav.car.idCategory)"
-        :transmission-name="fav.car.transmissionName || getTransmissionName(getCarTransId(fav.car))"
-        :fuel-type-name="fav.car.fuelTypeName || getFuelTypeName(getCarFuelId(fav.car))"
+        :key="fav.idFavorite || getCar(fav).idCar"
+        :car="getCar(fav)"
+        :category-name="getCar(fav).categoryName || getCategoryName(getCar(fav).idCategory)"
+        :transmission-name="getCar(fav).transmissionName || getTransmissionName(getCarTransId(getCar(fav)))"
+        :fuel-type-name="getCar(fav).fuelTypeName || getFuelTypeName(getCarFuelId(getCar(fav)))"
         :is-favorite="true"
         @details="openDetails"
         @book="openBooking"
@@ -146,12 +146,20 @@ function getFuelTypeName(fuelId) {
   return f ? f.name : '';
 }
 
+function getCar(fav) {
+  if (!fav) return {};
+  return fav.car || fav.Car || fav;
+}
+
 async function removeFavorite(car) {
-  const carId = car.idCar;
+  const carId = car.idCar || car.IdCar;
   try {
     await apiClient.removeFavorite(authState.userId, carId);
-    favorites.value = favorites.value.filter(f => (f.car?.idCar || f.idCar) !== carId);
-    if (activeDetailsCar.value && activeDetailsCar.value.idCar === carId) {
+    favorites.value = favorites.value.filter(f => {
+      const c = getCar(f);
+      return (c.idCar || c.IdCar || f.idCar || f.IdCar) !== carId;
+    });
+    if (activeDetailsCar.value && (activeDetailsCar.value.idCar === carId || activeDetailsCar.value.IdCar === carId)) {
       activeDetailsCar.value = null;
     }
     showToast('Автомобиль удален из избранного', 'info');
