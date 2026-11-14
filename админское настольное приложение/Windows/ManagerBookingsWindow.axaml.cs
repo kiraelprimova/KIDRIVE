@@ -47,6 +47,14 @@ public partial class ManagerBookingsWindow : Window
         if (AllBookings == null) return;
 
         IEnumerable<dynamic> filtered = AllBookings;
+        string search = ClientFilterBox.Text?.ToLower() ?? "";
+
+if (search != "")
+{
+    filtered = filtered.Where(b =>
+        $"{b.idUserNavigation.lastName} {b.idUserNavigation.firstName} {b.idUserNavigation.patronymic}"
+        .ToLower().Contains(search));
+}
         string? selected = (StatusFilterBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
 
         switch (selected)
@@ -73,6 +81,11 @@ public partial class ManagerBookingsWindow : Window
 
         RenderBookings(sorted);
     }
+
+    private void ClientFilterBox_TextChanged(object? sender, TextChangedEventArgs e)
+{
+    ApplySortAndRender();
+}
 
     private void RenderBookings(IEnumerable<dynamic> bookings)
     {

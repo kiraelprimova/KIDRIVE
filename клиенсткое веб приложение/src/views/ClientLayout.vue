@@ -115,10 +115,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { apiClient } from '../api';
 import { authState, logout } from '../auth';
-import { showConfirm } from '../notifications';
+import { showConfirm, showToast } from '../notifications';
 
 const route = useRoute();
 const router = useRouter();
@@ -183,6 +184,52 @@ function handleExit() {
   logout();
   router.push('/login');
 }
+
+// ===== Уведомление клиенту: менеджер подтвердил бронь =====
+let pollTimer = null;
+const notifyKey = () => `confirmedNotified_${authState.userId}`;
+
+async function checkConfirmedBookings() {
+  if (authState.isGuest || !authState.userId) return;
+
+  try {
+    const list = await apiClient.getBookings();
+    if (!Array.isArray(list)) return;
+
+    const confirmed = list.filter(
+      b => Number(b.idUser) === Number(authState.userId) && Number(b.idStatus) === 2
+    );
+
+    const raw = localStorage.getItem(notifyKey());
+    const firstRun = raw === null; // при первом запуске уже подтверждённые брони не показываем
+    const notified = new Set(raw ? JSON.parse(raw) : []);
+
+    for (const b of confirmed) {
+      if (notified.has(b.idBooking)) continue;
+      notified.add(b.idBooking);
+
+      if (!firstRun) {
+        const car = b.idCarNavigation?.model || 'автомобиль';
+        const date = new Date(b.bookingDate).toLocaleDateString('ru-RU');
+        const time = String(b.bookingTime).substring(0, 5);
+        showToast(`Менеджер подтвердил вашу бронь: ${car}, ${date} в ${time}`, 'success', 6000);
+      }
+    }
+
+    localStorage.setItem(notifyKey(), JSON.stringify([...notified]));
+  } catch (e) {
+    console.error('Ошибка проверки подтверждённых броней:', e);
+  }
+}
+
+onMounted(() => {
+  checkConfirmedBookings();
+  pollTimer = setInterval(checkConfirmedBookings, 10000);
+});
+
+onUnmounted(() => {
+  clearInterval(pollTimer);
+});
 </script>
 
 <style scoped>

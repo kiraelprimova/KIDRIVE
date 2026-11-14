@@ -41,7 +41,7 @@
                             Cursor="Hand"
                             HorizontalAlignment="Stretch">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="🚘" FontSize="14" Margin="12,0,10,0"/>
+                            <TextBlock Text="" FontSize="14" Margin="12,0,10,0"/>
                             <TextBlock Text="Каталог автомобилей" FontSize="13" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
@@ -56,7 +56,7 @@
                             HorizontalAlignment="Stretch"
                             Click="BookingsButton_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="📅" FontSize="13" Margin="12,0,10,0"/>
+                            <TextBlock Text="" FontSize="13" Margin="12,0,10,0"/>
                             <TextBlock Text="Мои бронирования" FontSize="13" Foreground="#111827" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
@@ -70,7 +70,7 @@
                             HorizontalAlignment="Stretch"
                             Click="ProfileButton_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="👤" FontSize="13" Margin="12,0,10,0"/>
+                            <TextBlock Text="" FontSize="13" Margin="12,0,10,0"/>
                             <TextBlock Text="Профиль" FontSize="13" Foreground="#111827" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
@@ -133,7 +133,7 @@
                                     CornerRadius="10"
                                     Height="44">
                                 <Grid ColumnDefinitions="45,*">
-                                    <TextBlock Text="🔍"
+                                    <TextBlock Text=""
                                                FontSize="14"
                                                Foreground="#1E3A8A"
                                                VerticalAlignment="Center"

@@ -27,11 +27,7 @@
                            HorizontalAlignment="Center"
                            Margin="0,0,0,6"/>
 
-                <TextBlock Text="Войдите в свой аккаунт для продолжения"
-                           FontSize="13.5"
-                           Foreground="#6B7280"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,26"/>
+                
 
                 <TextBlock Text="Номер телефона"
                            FontSize="13.5"
@@ -65,7 +61,7 @@
                              MaxLength="20"/>
 
                     <CheckBox x:Name="ShowPassword"
-                              Content="👁"
+                              
                               HorizontalAlignment="Right"
                               VerticalAlignment="Center"
                               Margin="0,0,10,0"

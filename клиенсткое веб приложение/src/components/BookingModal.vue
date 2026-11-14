@@ -1,3 +1,4 @@
+
 <template>
   <div class="modal-overlay" @click.self="$emit('close')">
     <div class="booking-window">
@@ -39,28 +40,67 @@
 
           <div class="form-group">
             <label class="field-label">Время</label>
+
             <select
               v-model="selectedTime"
               class="form-input"
-              :disabled="!bookingDate || loadingTimes"
+              :disabled="
+                !bookingDate ||
+                loadingTimes ||
+                timeLoadError ||
+                freeSlots.length === 0
+              "
             >
-              <option value="" disabled>
-                {{ loadingTimes ? 'Загрузка времени...' : 'Выберите время' }}
-              </option>
+              <option value="" disabled>{{ timePlaceholder }}</option>
+
+              <!-- Показываем только свободное время -->
               <option
-                v-for="t in timeSlots"
+                v-for="t in freeSlots"
                 :key="t.timeValue"
                 :value="t.timeValue"
-                :disabled="!t.isAvailable"
-                :class="{ 'busy-slot': !t.isAvailable }"
               >
-                {{ t.timeString }} {{ !t.isAvailable ? '(Занято)' : '' }}
+                {{ t.timeString }}
               </option>
             </select>
+
+            <!-- Ошибка загрузки -->
+            <div
+              v-if="timeLoadError"
+              class="no-times-hint"
+            >
+              Не удалось загрузить свободное время. Попробуйте выбрать дату ещё раз.
+            </div>
+
+            <!-- Нет свободного времени -->
+            <div
+              v-if="
+                bookingDate &&
+                !loadingTimes &&
+                !timeLoadError &&
+                freeSlots.length === 0
+              "
+              class="no-times-hint"
+            >
+              На выбранную дату нет доступного времени
+            </div>
+
+            <!-- Информация о моих бронях -->
+            <div v-if="myBookings.length" class="my-booking-warning">
+              <div v-for="b in myBookings" :key="b.time + b.car">
+                На этот день у вас уже есть бронь на {{ b.time
+                }}<span v-if="b.car"> ({{ b.car }})</span>
+              </div>
+
+              <div v-if="myConflict">
+                Выбранное время пересекается с вашей бронью.
+                Между бронями должно пройти не менее 4 часов.
+              </div>
+            </div>
           </div>
 
           <div class="form-group">
             <label class="field-label">Способ оплаты</label>
+
             <div class="radio-options">
               <label class="radio-label">
                 <input
@@ -71,6 +111,7 @@
                 />
                 <span>Наличный расчет</span>
               </label>
+
               <label class="radio-label">
                 <input
                   type="radio"
@@ -89,14 +130,16 @@
                 type="checkbox"
                 v-model="agreed"
               />
-              <span>Я соглашаюсь с условиями обработки персональных данных</span>
+              <span>
+                Я соглашаюсь с условиями обработки персональных данных
+              </span>
             </label>
           </div>
 
           <button
             class="btn-book"
             @click="submitBooking"
-            :disabled="submitting"
+            :disabled="submitting || !!myConflict"
           >
             {{ submitting ? 'Оформление...' : 'Забронировать' }}
           </button>
@@ -131,6 +174,7 @@ const paymentMethod = ref('');
 const agreed = ref(false);
 const loadingTimes = ref(false);
 const submitting = ref(false);
+const timeLoadError = ref(false);
 
 const allStandardTimes = [
   { timeString: '9:00', timeValue: '09:00:00' },
@@ -144,11 +188,49 @@ const allStandardTimes = [
   { timeString: '17:00', timeValue: '17:00:00' },
 ];
 
-const timeSlots = ref(
-  allStandardTimes.map(t => ({ ...t, isAvailable: true }))
+const timeSlots = ref([]);
+
+// Мои брони на выбранную дату
+const myBookings = ref([]);
+
+let loadCounter = 0;
+
+// Только свободное время
+const freeSlots = computed(() =>
+  timeSlots.value.filter(t => t.isAvailable)
 );
 
+const timePlaceholder = computed(() => {
+  if (loadingTimes.value) return 'Загрузка времени...';
+  if (timeLoadError.value) return 'Ошибка загрузки времени';
+  if (bookingDate.value && freeSlots.value.length === 0) {
+    return 'Нет свободного времени';
+  }
+  return 'Выберите время';
+});
+
+// Переводим время в минуты
+function toMinutes(timeStr) {
+  const [h, m] = String(timeStr).split(':');
+  return Number(h) * 60 + Number(m || 0);
+}
+
+// Проверка конфликта с моей бронью
+const myConflict = computed(() => {
+  if (!selectedTime.value) return null;
+
+  return (
+    myBookings.value.find(
+      b =>
+        Math.abs(
+          toMinutes(b.time) - toMinutes(selectedTime.value)
+        ) < 240
+    ) || null
+  );
+});
+
 const today = new Date();
+
 const minDateStr = computed(() => {
   return today.toISOString().split('T')[0];
 });
@@ -161,8 +243,10 @@ const maxDateStr = computed(() => {
 
 const carImageSrc = computed(() => {
   const path = props.car?.imagePath || props.car?.ImagePath;
+
   if (!path) return '/Resources/заглушка.png';
   if (path.startsWith('http') || path.startsWith('/')) return path;
+
   return `/Resources/${path}`;
 });
 
@@ -170,47 +254,115 @@ function onImgError(e) {
   e.target.src = '/Resources/заглушка.png';
 }
 
+// Загрузка свободного времени
 async function onDateChange() {
   if (!bookingDate.value) return;
+
+  const requestId = ++loadCounter;
+
   loadingTimes.value = true;
+  timeLoadError.value = false;
   selectedTime.value = '';
+  timeSlots.value = [];
+  myBookings.value = [];
 
   try {
-    const busyList = await apiClient.getBusyTimes(props.car.idCar, bookingDate.value);
-    // busyList - массив TimeSpan строк типа "09:00:00"
-    const busyFormatted = Array.isArray(busyList)
-      ? busyList.map(item => String(item).substring(0, 8))
-      : [];
+    const [busyList, allBookings] = await Promise.all([
+      apiClient.getBusyTimes(props.car.idCar, bookingDate.value),
+      apiClient.getBookings(),
+    ]);
 
+    // Проверяем, что дата не была изменена во время загрузки
+    if (requestId !== loadCounter) return;
+
+    // Мои брони на выбранную дату
+    myBookings.value = (Array.isArray(allBookings) ? allBookings : [])
+      .filter(b =>
+        Number(b.idUser) === Number(authState.userId) &&
+        Number(b.idStatus) !== 3 &&
+        String(b.bookingDate).substring(0, 10) === bookingDate.value
+      )
+      .map(b => ({
+        time: String(b.bookingTime).substring(0, 5),
+        car: b.idCarNavigation?.model || '',
+      }))
+      .sort((a, b) => a.time.localeCompare(b.time));
+
+    // Время, занятое выбранной машиной
+    const busyTimes = new Set(
+      Array.isArray(busyList)
+        ? busyList.map(item => String(item).substring(0, 8))
+        : []
+    );
+
+    // Проверяем все стандартные часы
     timeSlots.value = allStandardTimes.map(t => {
-      const isBusy = busyFormatted.some(b => b.startsWith(t.timeValue.substring(0, 2)));
+      // Занято ли время выбранной машины
+      const carBusy = busyTimes.has(t.timeValue);
+
+      // Есть ли у пользователя другая бронь
+      // ближе чем через 4 часа
+      const userBusy = myBookings.value.some(b =>
+        Math.abs(
+          toMinutes(b.time) - toMinutes(t.timeValue)
+        ) < 240
+      );
+
       return {
         ...t,
-        isAvailable: !isBusy,
+        isAvailable: !carBusy && !userBusy,
       };
     });
+
   } catch (err) {
     console.error('Ошибка получения занятого времени:', err);
-    timeSlots.value = allStandardTimes.map(t => ({ ...t, isAvailable: true }));
+
+    if (requestId === loadCounter) {
+      timeSlots.value = [];
+      myBookings.value = [];
+      timeLoadError.value = true;
+
+      showToast('Не удалось загрузить свободное время', 'error');
+    }
   } finally {
-    loadingTimes.value = false;
+    if (requestId === loadCounter) {
+      loadingTimes.value = false;
+    }
   }
 }
 
+// Создание бронирования
 async function submitBooking() {
+  if (loadingTimes.value || timeLoadError.value) {
+    showToast('Сначала загрузите свободное время', 'warning');
+    return;
+  }
+
   if (!bookingDate.value || !selectedTime.value) {
     showToast('Заполните дату и время', 'warning');
     return;
   }
 
-  const selectedSlot = timeSlots.value.find(t => t.timeValue === selectedTime.value);
-  if (selectedSlot && !selectedSlot.isAvailable) {
+  const selectedSlot = timeSlots.value.find(
+    t => t.timeValue === selectedTime.value
+  );
+
+  if (!selectedSlot || !selectedSlot.isAvailable) {
     showToast('Это время недоступно для бронирования', 'warning');
+    return;
+  }
+
+  if (myConflict.value) {
+    showToast(
+      'У вас уже есть бронь в этот промежуток времени',
+      'warning'
+    );
     return;
   }
 
   const selDate = new Date(bookingDate.value);
   selDate.setHours(0, 0, 0, 0);
+
   const now = new Date();
   now.setHours(0, 0, 0, 0);
 
@@ -221,13 +373,20 @@ async function submitBooking() {
 
   const monthLater = new Date(now);
   monthLater.setMonth(monthLater.getMonth() + 1);
+
   if (selDate > monthLater) {
-    showToast('Бронирование доступно только в пределах месяца', 'warning');
+    showToast(
+      'Бронирование доступно только в пределах месяца',
+      'warning'
+    );
     return;
   }
 
   if (!agreed.value) {
-    showToast('Для оформления бронирования необходимо согласиться с условиями', 'warning');
+    showToast(
+      'Для оформления бронирования необходимо согласиться с условиями',
+      'warning'
+    );
     return;
   }
 
@@ -246,14 +405,33 @@ async function submitBooking() {
   };
 
   submitting.value = true;
+
   try {
     const result = await apiClient.createBooking(bookingDto);
-    showToast(typeof result === 'string' ? result : 'Бронирование успешно создано!', 'success');
+
+    showToast(
+      typeof result === 'string'
+        ? result
+        : 'Бронирование успешно создано!',
+      'success'
+    );
+
     emit('success');
     emit('close');
+
   } catch (err) {
-    const errorText = err.response?.data || err.message || 'Ошибка оформления бронирования';
-    showToast(typeof errorText === 'string' ? errorText : JSON.stringify(errorText), 'error');
+    const errorText =
+      err.response?.data ||
+      err.message ||
+      'Ошибка оформления бронирования';
+
+    showToast(
+      typeof errorText === 'string'
+        ? errorText
+        : JSON.stringify(errorText),
+      'error'
+    );
+
   } finally {
     submitting.value = false;
   }
@@ -373,9 +551,18 @@ async function submitBooking() {
   color: #111827;
 }
 
-.busy-slot {
-  color: #9CA3AF;
-  background-color: #F3F4F6;
+.no-times-hint {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.my-booking-warning {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #DC2626;
 }
 
 .radio-options {
