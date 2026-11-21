@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 ﻿using System;
 using System.Collections.Generic;
 
@@ -13,7 +15,11 @@ public partial class Favorite
 
     public DateTime CreatedAt { get; set; }
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual Car IdCarNavigation { get; set; } = null!;
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual User IdUserNavigation { get; set; } = null!;
 }

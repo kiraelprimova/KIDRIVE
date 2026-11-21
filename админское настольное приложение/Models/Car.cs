@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace TestDriveAPI.Models;
 
@@ -20,7 +21,8 @@ public partial class Car
     public sbyte IsDeleted { get; set; }
     public decimal Price { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-
+    [JsonIgnore]
     public virtual Category IdCategoryNavigation { get; set; } = null!;
 }

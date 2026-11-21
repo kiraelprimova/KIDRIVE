@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 ﻿using System;
 using System.Collections.Generic;
 
@@ -15,7 +17,11 @@ public partial class AiChatHistory
 
     public DateTime CreatedAt { get; set; }
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual ChatSender IdSenderNavigation { get; set; } = null!;
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual User IdUserNavigation { get; set; } = null!;
 }

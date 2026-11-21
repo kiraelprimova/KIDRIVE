@@ -3,7 +3,7 @@
         x:Class="TestDriveAvalonia.Windows.ManagerBookingsWindow"
         Title="Бронирования"
         WindowState="Maximized"
-        Background="#F3F4F6"
+        Background="#F5F5F5"
         Icon="/Resources/logo.ico">
 
     <Grid>
@@ -31,61 +31,61 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Margin="10,25,10,0">
-                    <Button Height="40"
-                            Margin="0,0,0,10"
-                            Background="White"
-                            BorderThickness="1"
-                            BorderBrush="#E5E7EB"
-                            CornerRadius="10"
+                    <Button Height="38"
+                            Margin="0,0,0,12"
+                            Background="Transparent"
+                            Foreground="#111827"
+                            BorderThickness="0"
+                            CornerRadius="8"
                             Cursor="Hand"
                             HorizontalAlignment="Stretch"
                             Click="CarsButton_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="🚘" Margin="10,0,10,0"/>
-                            <TextBlock Text="Автомобили" Foreground="#111827" VerticalAlignment="Center"/>
+                            <TextBlock Text="" FontSize="13" Margin="12,0,10,0"/>
+                            <TextBlock Text="Автомобили" FontSize="13" Foreground="#111827" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Height="40"
-                            Margin="0,0,0,10"
+                    <Button Height="38"
+                            Margin="0,0,0,12"
                             Background="#1E3A8A"
                             Foreground="White"
                             BorderThickness="0"
-                            CornerRadius="10"
+                            CornerRadius="8"
                             Cursor="Hand"
                             HorizontalAlignment="Stretch">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="📅" Margin="10,0,10,0"/>
-                            <TextBlock Text="Бронирования" VerticalAlignment="Center"/>
+                            <TextBlock Text="" FontSize="13" Margin="12,0,10,0"/>
+                            <TextBlock Text="Бронирования" FontSize="13" Foreground="White" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Height="40"
-                            Margin="0,0,0,10"
-                            Background="White"
-                            BorderThickness="1"
-                            BorderBrush="#E5E7EB"
-                            CornerRadius="10"
+                    <Button Height="38"
+                            Margin="0,0,0,12"
+                            Background="Transparent"
+                            Foreground="#111827"
+                            BorderThickness="0"
+                            CornerRadius="8"
                             Cursor="Hand"
                             HorizontalAlignment="Stretch"
                             Click="AnalyticsButton_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="📊" Margin="10,0,10,0"/>
-                            <TextBlock Text="Аналитика" Foreground="#111827" VerticalAlignment="Center"/>
+                            <TextBlock Text="" FontSize="13" Margin="12,0,10,0"/>
+                            <TextBlock Text="Аналитика" FontSize="13" Foreground="#111827" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Height="40"
-                            Background="White"
-                            BorderThickness="1"
-                            BorderBrush="#E5E7EB"
-                            CornerRadius="10"
+                    <Button Height="38"
+                            Background="Transparent"
+                            Foreground="#111827"
+                            BorderThickness="0"
+                            CornerRadius="8"
                             Cursor="Hand"
                             HorizontalAlignment="Stretch"
                             Click="ProfileButton_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="👤" Margin="10,0,10,0"/>
-                            <TextBlock Text="Профиль" Foreground="#111827" VerticalAlignment="Center"/>
+                            <TextBlock Text="" FontSize="13" Margin="12,0,10,0"/>
+                            <TextBlock Text="Профиль" FontSize="13" Foreground="#111827" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -93,14 +93,14 @@
         </Border>
 
         <!-- Контент -->
-        <Grid Grid.Column="1" RowDefinitions="60,*">
+        <Grid Grid.Column="1" RowDefinitions="55,*">
             <Border Background="White"
                     BorderBrush="#E5E7EB"
                     BorderThickness="0,0,0,1">
-                <Grid Margin="20,0" ColumnDefinitions="*,Auto">
+                <Grid Margin="15,0" ColumnDefinitions="*,Auto">
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock x:Name="UserText"
-                                   FontWeight="Bold"
+                                   FontWeight="SemiBold"
                                    FontSize="15"
                                    Foreground="#111827"/>
                         <TextBlock x:Name="EmailText"
@@ -110,7 +110,7 @@
                     </StackPanel>
 
                     <Button Grid.Column="1"
-                            Height="35"
+                            Height="32"
                             Background="Transparent"
                             BorderThickness="0"
                             Cursor="Hand"

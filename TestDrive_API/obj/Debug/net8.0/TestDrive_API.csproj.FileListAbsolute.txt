@@ -548,3 +548,11 @@ C:\Users\darina\Desktop\kidrive\TestDrive_API\obj\Debug\net8.0\refint\TestDrive_
 C:\Users\darina\Desktop\kidrive\TestDrive_API\obj\Debug\net8.0\TestDrive_API.pdb
 C:\Users\darina\Desktop\kidrive\TestDrive_API\obj\Debug\net8.0\TestDrive_API.genruntimeconfig.cache
 C:\Users\darina\Desktop\kidrive\TestDrive_API\obj\Debug\net8.0\ref\TestDrive_API.dll
+C:\Users\kira\Desktop\kidrive\TestDrive_API\obj\Debug\net8.0\swae.build.ex.cache
+C:\Users\kira\AppData\Local\Temp\kidrive-api-build\appsettings.Development.json
+C:\Users\kira\AppData\Local\Temp\kidrive-api-build\appsettings.json
+C:\Users\kira\AppData\Local\Temp\kidrive-api-build\TestDrive_API.staticwebassets.endpoints.json
+C:\Users\kira\AppData\Local\Temp\kidrive-api-build\TestDrive_API.deps.json
+C:\Users\kira\AppData\Local\Temp\kidrive-api-build\TestDrive_API.runtimeconfig.json
+C:\Users\kira\AppData\Local\Temp\kidrive-api-build\TestDrive_API.dll
+C:\Users\kira\AppData\Local\Temp\kidrive-api-build\TestDrive_API.pdb

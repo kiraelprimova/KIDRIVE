@@ -91,7 +91,7 @@ export const apiClient = {
   },
 
   async cancelBooking(bookingId) {
-    const response = await api.put(`/Booking/UpdateStatus?id=${bookingId}&statusId=3`);
+    const response = await api.put(`/Booking/UpdateStatus/${bookingId}?statusId=3`);
     return response.data;
   },
 

@@ -45,12 +45,24 @@ namespace TestDrive_API.Controllers
 
         [HttpPost("AddCar")]
         [HttpPost]
-        public async Task<ActionResult> AddCar(Car car)
+        public async Task<ActionResult> AddCar(CarRequest model)
         {
-            if (car == null)
+            if (model == null)
                 return BadRequest("Неверные данные");
 
-            car.IsDeleted = 0;
+            var car = new Car
+            {
+                IdCategory = model.IdCategory,
+                Model = model.Model,
+                YearCar = model.YearCar,
+                Description = model.Description,
+                ImagePath = model.ImagePath,
+                Price = model.Price,
+                PowerHp = model.PowerHp,
+                IdFuelType = model.IdFuelType,
+                IdTreansmission = model.IdTreansmission,
+                IsDeleted = 0
+            };
 
             var validationResult = _validation.ValidateCar(car);
             if (validationResult != null)
@@ -65,7 +77,7 @@ namespace TestDrive_API.Controllers
         [HttpPut("EditCar")]
         [HttpPut("{id}")]
         [HttpPut("EditCar/{id}")]
-        public async Task<ActionResult> UpdateCar(int id, Car model)
+        public async Task<ActionResult> UpdateCar(int id, CarRequest model)
         {
             if (model == null)
                 return BadRequest("Неверные данные");

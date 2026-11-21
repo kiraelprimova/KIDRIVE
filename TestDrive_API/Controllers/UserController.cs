@@ -30,7 +30,6 @@ namespace TestDrive_API.Controllers
             if (_context.Users.Any(u => u.Phone == user.Phone))
                 return BadRequest("Телефон уже используется");
 
-            user.Password = PasswordHelper.HashPassword(user.Password);
             user.IdRole = 1;
             user.IsDelete = 0;
 
@@ -74,10 +73,8 @@ namespace TestDrive_API.Controllers
 
             user.Account = 1;
 
-            if (user.Password == password)
-            {
-                user.Password = PasswordHelper.HashPassword(password);
-            }
+            // Replace a legacy hash after the user successfully signs in.
+            user.Password = password;
 
             await _context.SaveChangesAsync();
 
@@ -109,7 +106,7 @@ namespace TestDrive_API.Controllers
         [HttpPut("UpdateClient")]
         [HttpPut("{id}")]
         [HttpPut("UpdateClient/{id}")]
-        public async Task<ActionResult> UpdateClient(int id, User model)
+        public async Task<ActionResult> UpdateClient(int id, UpdateUserRequest model)
         {
             if (model == null)
                 return BadRequest("Неверные данные");
@@ -119,18 +116,22 @@ namespace TestDrive_API.Controllers
             if (user == null)
                 return NotFound("Пользователь не найден");
 
-            if (_context.Users.Any(u => u.Phone == model.Phone && u.IdUser != id))
-                return BadRequest("Телефон уже используется");
+            var phoneDigits = new string(model.Phone.Where(char.IsDigit).ToArray());
+            if (phoneDigits.StartsWith("8"))
+                phoneDigits = "7" + phoneDigits.Substring(1);
 
-            if (!string.IsNullOrWhiteSpace(model.Password))
+            var otherPhones = await _context.Users
+                .Where(u => u.IdUser != id)
+                .Select(u => u.Phone)
+                .ToListAsync();
+            if (otherPhones.Any(phone =>
             {
-                if (model.Password.Length < 8)
-                    return BadRequest("Пароль должен содержать не менее 8 символов");
-
-                user.Password = model.Password.Length == 64
-                    ? model.Password
-                    : PasswordHelper.HashPassword(model.Password);
-            }
+                var digits = new string((phone ?? "").Where(char.IsDigit).ToArray());
+                if (digits.StartsWith("8"))
+                    digits = "7" + digits.Substring(1);
+                return phoneDigits.Length > 0 && digits == phoneDigits;
+            }))
+                return BadRequest("Телефон уже используется");
 
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
@@ -169,8 +170,8 @@ namespace TestDrive_API.Controllers
         [HttpPut("RestoreUser")]
         public async Task<ActionResult> RestoreUser(string phone, string password)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Phone == phone && u.Password == password);
+            var user = _context.Users.AsEnumerable()
+                .FirstOrDefault(u => u.Phone == phone && PasswordHelper.VerifyPassword(password, u.Password));
 
             if (user == null)
                 return NotFound("Пользователь не найден");
@@ -179,6 +180,7 @@ namespace TestDrive_API.Controllers
                 return BadRequest("Аккаунт уже активен");
 
             user.IsDelete = 0;
+            user.Password = password;
 
             await _context.SaveChangesAsync();
 
@@ -211,7 +213,7 @@ namespace TestDrive_API.Controllers
             if (user == null)
                 return NotFound("Пользователь не найден");
 
-            user.Password = PasswordHelper.HashPassword(newPassword);
+            user.Password = newPassword;
 
             await _context.SaveChangesAsync();
 

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 ﻿using System;
 using System.Collections.Generic;
 
@@ -9,5 +11,7 @@ public partial class BookingStatus
 
     public string StatusName { get; set; } = null!;
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 }

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 ﻿using System;
 using System.Collections.Generic;
 
@@ -30,13 +32,23 @@ public partial class Car
 
     public int? IdTreansmission { get; set; }
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual Category IdCategoryNavigation { get; set; } = null!;
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual FuelsType? IdFuelTypeNavigation { get; set; }
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual Transmission? IdTreansmissionNavigation { get; set; }
 }

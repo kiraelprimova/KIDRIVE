@@ -205,19 +205,8 @@ async function handleChangePassword() {
     showToast('Пароль успешно изменен!', 'success');
     router.push('/app/profile');
   } catch (err) {
-    // Если на бэкенде changePassword не сработал или нет эндпоинта, пробуем обновить через UpdateClient
-    try {
-      const u = await apiClient.getUser(authState.userId);
-      await apiClient.updateUser(authState.userId, {
-        ...u,
-        password: newPassword.value,
-      });
-      showToast('Пароль успешно изменен!', 'success');
-      router.push('/app/profile');
-    } catch (updateErr) {
-      const msg = updateErr.response?.data || updateErr.message || 'Ошибка изменения пароля';
-      showToast(typeof msg === 'string' ? msg : 'Ошибка изменения пароля', 'error');
-    }
+    const msg = err.response?.data || err.message || 'Ошибка изменения пароля';
+    showToast(typeof msg === 'string' ? msg : 'Ошибка изменения пароля', 'error');
   } finally {
     loading.value = false;
   }

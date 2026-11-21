@@ -139,8 +139,7 @@ const phone = ref('');
 const email = ref('');
 const birthDate = ref('');
 
-// Храним пароль и роль пользователя, чтобы не затереть их при обычном обновлении профиля
-let existingPassword = '';
+// Сохраняем роль пользователя при обновлении профиля
 let userRoleId = 1;
 
 onMounted(async () => {
@@ -158,7 +157,6 @@ async function loadUserData() {
     patronymic.value = user.patronymic || user.Patronymic || '';
     phone.value = user.phone || user.Phone || '';
     email.value = user.email || user.Email || '';
-    existingPassword = user.password || user.Password || '';
     userRoleId = user.idRole || user.IdRole || 1;
 
     const bDate = user.birthDate || user.BirthDate;
@@ -191,52 +189,6 @@ function onPhoneInput(e) {
 
 function goToChangePassword() {
   router.push('/app/change-password');
-}
-
-function cleanDigits(val) {
-  return String(val || '').replace(/\D/g, '');
-}
-
-async function checkPhoneAndEmailUnique(newPhone, newEmail, currentUserId) {
-  try {
-    const clients = await apiClient.getAllClients();
-    if (!Array.isArray(clients)) return { ok: true };
-
-    const cleanNewPhone = cleanDigits(newPhone);
-    const normalizedNewPhone = cleanNewPhone.startsWith('8') ? '7' + cleanNewPhone.substring(1) : cleanNewPhone;
-    const cleanNewEmail = String(newEmail || '').trim().toLowerCase();
-
-    for (const client of clients) {
-      const clientId = client.idUser || client.IdUser;
-      if (Number(clientId) === Number(currentUserId)) {
-        continue; // Свой аккаунт пропускаем
-      }
-
-      // Проверка телефона
-      const clientPhoneDigits = cleanDigits(client.phone);
-      const normalizedClientPhone = clientPhoneDigits.startsWith('8') ? '7' + clientPhoneDigits.substring(1) : clientPhoneDigits;
-      if (normalizedNewPhone && normalizedClientPhone && normalizedNewPhone === normalizedClientPhone) {
-        return {
-          ok: false,
-          error: 'Пользователь с таким номером телефона уже существует!'
-        };
-      }
-
-      // Проверка почты
-      const clientEmail = String(client.email || '').trim().toLowerCase();
-      if (cleanNewEmail && clientEmail && cleanNewEmail === clientEmail) {
-        return {
-          ok: false,
-          error: 'Пользователь с таким адресом электронной почты уже существует!'
-        };
-      }
-    }
-
-    return { ok: true };
-  } catch (err) {
-    console.warn('Не удалось проверить уникальность через GetAllClients:', err);
-    return { ok: true };
-  }
 }
 
 async function saveProfile() {
@@ -288,14 +240,6 @@ async function saveProfile() {
 
   saving.value = true;
 
-  // Проверка уникальности телефона и почты
-  const uniqueCheck = await checkPhoneAndEmailUnique(phone.value, email.value, authState.userId);
-  if (!uniqueCheck.ok) {
-    showToast(uniqueCheck.error, 'error', 4500);
-    saving.value = false;
-    return;
-  }
-
   const payload = {
     idUser: authState.userId,
     idRole: userRoleId || authState.user?.idRole || authState.user?.IdRole || 1,
@@ -304,7 +248,6 @@ async function saveProfile() {
     patronymic: (patronymic.value || '').trim(),
     phone: phone.value,
     email: email.value.trim(),
-    password: existingPassword, // сохраняем существующий пароль
     birthDate: birthDate.value,
   };
 

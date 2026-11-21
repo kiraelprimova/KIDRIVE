@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace TestDrive_API.Models;
 
@@ -27,11 +29,16 @@ public partial class User
 
     public sbyte Account { get; set; }
 
+    [JsonIgnore]
+    [ValidateNever]
     public virtual ICollection<AiChatHistory> AiChatHistories { get; set; } = new List<AiChatHistory>();
-
+    [JsonIgnore]
+    [ValidateNever]
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-
+    [JsonIgnore]
+    [ValidateNever]
     public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
-
+    [JsonIgnore]
+    [ValidateNever]
     public virtual Role IdRoleNavigation { get; set; } = null!;
 }

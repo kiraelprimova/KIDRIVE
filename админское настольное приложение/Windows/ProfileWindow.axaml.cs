@@ -19,7 +19,6 @@ public partial class ProfileWindow : Window
     private string originalPatronymic = "";
     private string originalPhone = "";
     private string originalEmail = "";
-    private string originalPassword = "";
     private DateTimeOffset? originalBirthDate;
 
     public ProfileWindow()
@@ -56,7 +55,6 @@ public partial class ProfileWindow : Window
                 PatronymicBox.Text = user.patronymic;
                 PhoneBox.Text = user.phone;
                 EmailBox.Text = user.email;
-                originalPassword = user.password ?? "";
 
                 if (user.birthDate != null)
                 {
@@ -220,14 +218,13 @@ public partial class ProfileWindow : Window
 
         try
         {
-            var dto = new UserDTO
+            var dto = new
             {
                 FirstName = firstName,
                 LastName = lastName,
                 Patronymic = patronymic,
                 Phone = phone,
                 Email = email,
-                Password = originalPassword,
                 BirthDate = birth,
                 IdRole = 1
             };

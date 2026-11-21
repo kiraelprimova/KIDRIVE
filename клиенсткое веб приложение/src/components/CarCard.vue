@@ -146,12 +146,7 @@ async function handleBook() {
 .card-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.car-card:hover .card-img {
-  transform: scale(1.04);
+  object-fit: contain;
 }
 
 .btn-fav {

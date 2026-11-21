@@ -18,7 +18,6 @@ public partial class ManagerProfileWindow : Window
     private string originalPatronymic = "";
     private string originalPhone = "";
     private string originalEmail = "";
-    private string originalPassword = "";
     private DateTimeOffset? originalBirthDate;
 
     public ManagerProfileWindow()
@@ -48,7 +47,6 @@ public partial class ManagerProfileWindow : Window
                 PatronymicBox.Text = user.patronymic;
                 PhoneBox.Text = user.phone;
                 EmailBox.Text = user.email;
-                originalPassword = user.password ?? "";
 
                 if (user.birthDate != null)
                 {
@@ -212,14 +210,13 @@ public partial class ManagerProfileWindow : Window
 
         try
         {
-            var dto = new UserDTO
+            var dto = new
             {
                 FirstName = firstName,
                 LastName = lastName,
                 Patronymic = patronymic,
                 Phone = phone,
                 Email = email,
-                Password = originalPassword,
                 BirthDate = birth,
                 IdRole = 2 // менеджер
             };
